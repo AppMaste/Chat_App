@@ -2,9 +2,11 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chat_demo_app/widgets/AppAllWidget/Details.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../api/apis.dart';
@@ -61,73 +63,83 @@ class _ChatScreenState extends State<ChatScreen> {
             backgroundColor: const Color.fromARGB(255, 234, 248, 255),
 
             //body
-            body: Column(
-              children: [
-                Expanded(
-                  child: StreamBuilder(
-                    stream: APIs.getAllMessages(widget.user),
-                    builder: (context, snapshot) {
-                      switch (snapshot.connectionState) {
-                        //if data is loading
-                        case ConnectionState.waiting:
-                        case ConnectionState.none:
-                          return const SizedBox();
-
-                        //if some or all data is loaded then show it
-                        case ConnectionState.active:
-                        case ConnectionState.done:
-                          final data = snapshot.data?.docs;
-                          _list = data
-                                  ?.map((e) => Message.fromJson(e.data()))
-                                  .toList() ??
-                              [];
-
-                          if (_list.isNotEmpty) {
-                            return ListView.builder(
-                                reverse: true,
-                                itemCount: _list.length,
-                                padding: EdgeInsets.only(top: mq.height * .01),
-                                physics: const BouncingScrollPhysics(),
-                                itemBuilder: (context, index) {
-                                  return MessageCard(message: _list[index]);
-                                });
-                          } else {
-                            return const Center(
-                              child: Text('Say Hii! 👋',
-                                  style: TextStyle(fontSize: 20)),
-                            );
-                          }
-                      }
-                    },
-                  ),
+            body: Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/icons/background.jpg'),
+                  fit: BoxFit.cover,
+                  opacity: 0.3,
                 ),
+              ),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: StreamBuilder(
+                      stream: APIs.getAllMessages(widget.user),
+                      builder: (context, snapshot) {
+                        switch (snapshot.connectionState) {
+                          //if data is loading
+                          case ConnectionState.waiting:
+                          case ConnectionState.none:
+                            return const SizedBox();
 
-                //progress indicator for showing uploading
-                if (_isUploading)
-                  const Align(
-                      alignment: Alignment.centerRight,
-                      child: Padding(
-                          padding:
-                              EdgeInsets.symmetric(vertical: 8, horizontal: 20),
-                          child: CircularProgressIndicator(strokeWidth: 2))),
+                          //if some or all data is loaded then show it
+                          case ConnectionState.active:
+                          case ConnectionState.done:
+                            final data = snapshot.data?.docs;
+                            _list = data
+                                    ?.map((e) => Message.fromJson(e.data()))
+                                    .toList() ??
+                                [];
 
-                //chat input filed
-                _chatInput(),
-
-                //show emojis on keyboard emoji button click & vice versa
-                if (_showEmoji)
-                  SizedBox(
-                    height: mq.height * .35,
-                    child: EmojiPicker(
-                      textEditingController: _textController,
-                      config: Config(
-                        bgColor: const Color.fromARGB(255, 234, 248, 255),
-                        columns: 8,
-                        emojiSizeMax: 32 * (Platform.isIOS ? 1.30 : 1.0),
-                      ),
+                            if (_list.isNotEmpty) {
+                              return ListView.builder(
+                                  reverse: true,
+                                  itemCount: _list.length,
+                                  padding:
+                                      EdgeInsets.only(top: mq.height * .01),
+                                  physics: const BouncingScrollPhysics(),
+                                  itemBuilder: (context, index) {
+                                    return MessageCard(message: _list[index]);
+                                  });
+                            } else {
+                              return Center(
+                                child: Text('Say Hii! 👋',
+                                    style: GoogleFonts.lexend(fontSize: 20)),
+                              );
+                            }
+                        }
+                      },
                     ),
-                  )
-              ],
+                  ),
+
+                  //progress indicator for showing uploading
+                  if (_isUploading)
+                    const Align(
+                        alignment: Alignment.centerRight,
+                        child: Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 20),
+                            child: CircularProgressIndicator(strokeWidth: 2))),
+
+                  //chat input filed
+                  _chatInput(),
+
+                  //show emojis on keyboard emoji button click & vice versa
+                  if (_showEmoji)
+                    SizedBox(
+                      height: mq.height * .35,
+                      child: EmojiPicker(
+                        textEditingController: _textController,
+                        config: Config(
+                          bgColor: const Color.fromARGB(255, 234, 248, 255),
+                          columns: 8,
+                          emojiSizeMax: 32 * (Platform.isIOS ? 1.30 : 1.0),
+                        ),
+                      ),
+                    )
+                ],
+              ),
             ),
           ),
         ),
@@ -182,7 +194,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     children: [
                       //user name
                       Text(list.isNotEmpty ? list[0].name : widget.user.name,
-                          style: const TextStyle(
+                          style: GoogleFonts.lexend(
                               fontSize: 16,
                               color: Colors.black87,
                               fontWeight: FontWeight.w500)),
@@ -201,7 +213,7 @@ class _ChatScreenState extends State<ChatScreen> {
                               : MyDateUtil.getLastActiveTime(
                                   context: context,
                                   lastActive: widget.user.lastActive),
-                          style: const TextStyle(
+                          style: GoogleFonts.lexend(
                               fontSize: 13, color: Colors.black54)),
                     ],
                   )
@@ -241,9 +253,9 @@ class _ChatScreenState extends State<ChatScreen> {
                     onTap: () {
                       if (_showEmoji) setState(() => _showEmoji = !_showEmoji);
                     },
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                         hintText: 'Type Something...',
-                        hintStyle: TextStyle(color: Colors.blueAccent),
+                        hintStyle: GoogleFonts.lexend(color: Colors.blueAccent),
                         border: InputBorder.none),
                   )),
 

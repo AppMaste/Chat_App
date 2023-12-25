@@ -1,7 +1,9 @@
 import 'dart:developer';
 
+import 'package:chat_demo_app/widgets/AppAllWidget/Details.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../main.dart';
 import '../api/apis.dart';
@@ -47,23 +49,38 @@ class _SplashScreenState extends State<SplashScreen> {
 
     return Scaffold(
       //body
-      body: Stack(children: [
-        //app logo
-        Positioned(
-            top: mq.height * .15,
-            right: mq.width * .25,
-            width: mq.width * .5,
-            child: Image.asset('images/icon.png')),
-
-        //google login button
-        Positioned(
-            bottom: mq.height * .15,
-            width: mq.width,
-            child: const Text('MADE IN INDIA WITH ❤️',
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: allWidget.backgroundColor,
+          ),
+        ),
+        height: double.maxFinite,
+        width: double.maxFinite,
+        child: Stack(
+          children: [
+            Positioned(
+              top: mq.height * .15,
+              right: mq.width * .25,
+              width: mq.width * .5,
+              child: Image.asset('images/chat.png'),
+            ),
+            //google login button
+            Positioned(
+              bottom: mq.height * .15,
+              width: mq.width,
+              child: Text(
+                'MADE IN INDIA WITH ❤️',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: 16, color: Colors.black87, letterSpacing: .5))),
-      ]),
+                style: GoogleFonts.lexend(
+                    fontSize: 16, color: Colors.white, letterSpacing: .5),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

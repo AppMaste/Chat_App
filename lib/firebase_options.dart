@@ -50,19 +50,19 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBeszZHLYJNyjUhpujMH9yZ4ol9JqsAmPU',
-    appId: '1:288842837392:android:1353619813061d867a5715',
+    apiKey: 'AIzaSyA96pe-uXaBd5G03EP0ewFJCI4aaEq3LYA',
+    appId: '1:1066436875036:android:73b1599b71f1ba906060d9',
     messagingSenderId: '288842837392',
-    projectId: 'we-chat-75f13',
-    storageBucket: 'we-chat-75f13.appspot.com',
+    projectId: 'userchat-653e9',
+    // storageBucket: 'we-chat-75f13.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyCCYZoZ5DvuitZJ7qK5iWM3ARHBDoFFriY',
     appId: '1:288842837392:ios:f39c8dc31525a6687a5715',
     messagingSenderId: '288842837392',
-    projectId: 'we-chat-75f13',
-    storageBucket: 'we-chat-75f13.appspot.com',
+    projectId: 'userchat-653e9',
+    // storageBucket: 'we-chat-75f13.appspot.com',
     androidClientId: '288842837392-gvt1l790g0t1fmnurc5pmko3oss8b1tq.apps.googleusercontent.com',
     iosClientId: '288842837392-sgib97u6439i4jte3bo19u00fh663euu.apps.googleusercontent.com',
     iosBundleId: 'com.harshRajpurohit.weChat',

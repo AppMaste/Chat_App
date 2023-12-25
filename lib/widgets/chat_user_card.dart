@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../api/apis.dart';
 import '../helper/my_date_util.dart';
@@ -68,16 +69,18 @@ class _ChatUserCardState extends State<ChatUserCard> {
                 ),
 
                 //user name
-                title: Text(widget.user.name),
+                title: Text(widget.user.name, style: GoogleFonts.lexend()),
 
                 //last message
                 subtitle: Text(
-                    _message != null
-                        ? _message!.type == Type.image
-                            ? 'image'
-                            : _message!.msg
-                        : widget.user.about,
-                    maxLines: 1),
+                  _message != null
+                      ? _message!.type == Type.image
+                          ? 'image'
+                          : _message!.msg
+                      : widget.user.about,
+                  maxLines: 1,
+                  style: GoogleFonts.lexend(),
+                ),
 
                 //last message time
                 trailing: _message == null
@@ -98,7 +101,7 @@ class _ChatUserCardState extends State<ChatUserCard> {
                         Text(
                             MyDateUtil.getLastMessageTime(
                                 context: context, time: _message!.sent),
-                            style: const TextStyle(color: Colors.black54),
+                            style:  GoogleFonts.lexend(color: Colors.black54),
                           ),
               );
             },

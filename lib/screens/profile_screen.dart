@@ -7,6 +7,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -37,7 +38,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
           //app bar
-          appBar: AppBar(title: const Text('Profile Screen')),
+          appBar: AppBar(title:  Text('Profile Screen',style: GoogleFonts.lexend(),)),
 
           //floating button to log out
           floatingActionButton: Padding(
@@ -70,7 +71,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   });
                 },
                 icon: const Icon(Icons.logout),
-                label: const Text('Logout')),
+                label:  Text('Logout',style: GoogleFonts.lexend(),)),
           ),
 
           //body
@@ -138,7 +139,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     // user email label
                     Text(widget.user.email,
-                        style: const TextStyle(
+                        style:  GoogleFonts.lexend(
                             color: Colors.black54, fontSize: 16)),
 
                     // for adding some space
@@ -157,7 +158,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12)),
                           hintText: 'eg. Happy Singh',
-                          label: const Text('Name')),
+                          label:  Text('Name',style: GoogleFonts.lexend(),)),
                     ),
 
                     // for adding some space
@@ -176,7 +177,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12)),
                           hintText: 'eg. Feeling Happy',
-                          label: const Text('About')),
+                          label:  Text('About',style: GoogleFonts.lexend(),)),
                     ),
 
                     // for adding some space
@@ -198,7 +199,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       },
                       icon: const Icon(Icons.edit, size: 28),
                       label:
-                          const Text('UPDATE', style: TextStyle(fontSize: 16)),
+                           Text('UPDATE', style: GoogleFonts.lexend(fontSize: 16)),
                     )
                   ],
                 ),
@@ -222,9 +223,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 EdgeInsets.only(top: mq.height * .03, bottom: mq.height * .05),
             children: [
               //pick profile picture label
-              const Text('Pick Profile Picture',
+               Text('Pick Profile Picture',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
+                  style: GoogleFonts.lexend(fontSize: 20, fontWeight: FontWeight.w500)),
 
               //for adding some space
               SizedBox(height: mq.height * .02),

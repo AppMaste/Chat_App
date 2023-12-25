@@ -3,11 +3,13 @@ import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../api/apis.dart';
 import '../../helper/dialogs.dart';
 import '../../main.dart';
+import '../../widgets/AppAllWidget/Details.dart';
 import '../home_screen.dart';
 
 //login screen -- implements google sign in or sign up feature for app
@@ -77,7 +79,8 @@ class _LoginScreenState extends State<LoginScreen> {
       return await APIs.auth.signInWithCredential(credential);
     } catch (e) {
       log('\n_signInWithGoogle: $e');
-      Dialogs.showSnackbar(context, 'Something Went Wrong (Check Internet!)');
+      // Dialogs.showSnackbar(context, 'Something Went Wrong (Check Internet!)');
+      Dialogs.showSnackbar(context, '${e.toString()}');
       return null;
     }
   }
@@ -94,33 +97,58 @@ class _LoginScreenState extends State<LoginScreen> {
     // mq = MediaQuery.of(context).size;
 
     return Scaffold(
+      backgroundColor: Colors.black,
       //app bar
       appBar: AppBar(
+        backgroundColor: allWidget.appBarColor,
         automaticallyImplyLeading: false,
-        title: const Text('Welcome to We Chat'),
+        title: Text(
+          'Welcome to Chat',
+          style: GoogleFonts.lexend(
+            color: Colors.white,
+          ),
+        ),
       ),
 
       //body
-      body: Stack(children: [
-        //app logo
-        AnimatedPositioned(
-            top: mq.height * .15,
-            right: _isAnimate ? mq.width * .25 : -mq.width * .5,
-            width: mq.width * .5,
-            duration: const Duration(seconds: 1),
-            child: Image.asset('images/icon.png')),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: allWidget.backgroundColor,
+          ),
+        ),
+        height: double.maxFinite,
+        width: double.maxFinite,
+        child: Stack(
+          children: [
+            // Screen look
+            //app logo
+            AnimatedPositioned(
+              top: mq.height * .15,
+              right: _isAnimate ? mq.width * .25 : -mq.width * .5,
+              width: mq.width * .5,
+              duration: const Duration(seconds: 1),
+              child: Image.asset('images/chat.png'),
+            ),
 
-        //google login button
-        Positioned(
-            bottom: mq.height * .15,
-            left: mq.width * .05,
-            width: mq.width * .9,
-            height: mq.height * .06,
-            child: ElevatedButton.icon(
+            //google login button
+            Positioned(
+              bottom: mq.height * .15,
+              left: mq.width * .05,
+              width: mq.width * .9,
+              height: mq.height * .06,
+              child: ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 223, 255, 187),
-                    shape: const StadiumBorder(),
-                    elevation: 1),
+                  // onPrimary: allWidget.buttonColor,
+                  elevation: 10,
+                  // Elevation
+                  shadowColor: allWidget.whiteColor,
+                  backgroundColor: allWidget.appBarColor,
+                  shape: const StadiumBorder(),
+                  // elevation: 1,
+                ),
                 onPressed: () {
                   _handleGoogleBtnClick();
                 },
@@ -130,16 +158,31 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 //login with google label
                 label: RichText(
-                  text: const TextSpan(
-                      style: TextStyle(color: Colors.black, fontSize: 16),
-                      children: [
-                        TextSpan(text: 'Login with '),
-                        TextSpan(
-                            text: 'Google',
-                            style: TextStyle(fontWeight: FontWeight.w500)),
-                      ]),
-                ))),
-      ]),
+                  text: TextSpan(
+                    style:
+                        GoogleFonts.lexend(color: Colors.black, fontSize: 16),
+                    children: [
+                      TextSpan(
+                        text: 'Login with ',
+                        style: GoogleFonts.lexend(
+                          color: allWidget.whiteColor,
+                        ),
+                      ),
+                      TextSpan(
+                        text: 'Google',
+                        style: GoogleFonts.lexend(
+                          fontWeight: FontWeight.w500,
+                          color: allWidget.whiteColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

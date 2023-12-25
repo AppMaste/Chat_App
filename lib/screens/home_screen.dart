@@ -1,15 +1,158 @@
 import 'dart:developer';
-
+import 'package:flashy_tab_bar2/flashy_tab_bar2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
+import 'package:google_fonts/google_fonts.dart';
+import 'package:gradient_borders/box_borders/gradient_box_border.dart';
+import 'package:simple_gradient_text/simple_gradient_text.dart';
 import '../api/apis.dart';
 import '../helper/dialogs.dart';
 import '../main.dart';
 import '../models/chat_user.dart';
+import '../widgets/AppAllWidget/Details.dart';
 import '../widgets/chat_user_card.dart';
 import 'profile_screen.dart';
+
+Future<bool> _onWillPop(BuildContext context) async {
+  bool? exitResult = await showDialog(
+    context: context,
+    builder: (context) => _buildExitDialog(context),
+  );
+  return exitResult ?? false;
+}
+
+Scaffold _buildExitDialog(BuildContext context) {
+  return Scaffold(
+    backgroundColor: Colors.transparent,
+    body: Center(
+      child: Container(
+        height: 250,
+        width: 300,
+        decoration: BoxDecoration(
+          color: Colors.black,
+          border: GradientBoxBorder(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                const Color(0xFF9188FB).withOpacity(0.6),
+                const Color(0xFFA23BED).withOpacity(0.6),
+              ],
+            ),
+          ),
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF9B5AF3).withOpacity(0.7),
+              blurRadius: 50,
+              spreadRadius: 10,
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            GradientText(
+              "EXIT",
+              style: GoogleFonts.lexend(
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+                fontSize: 25,
+              ),
+              colors: const [
+                Color(0xFF9188FB),
+                Color(0xFFA23BED),
+              ],
+              gradientDirection: GradientDirection.ttb,
+            ),
+            Text(
+              "Do you really want to Exit?",
+              textAlign: TextAlign.center,
+              style: GoogleFonts.lexend(
+                fontWeight: FontWeight.w400,
+                color: Colors.white,
+                fontSize: 20,
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                GestureDetector(
+                  onTap: () => Navigator.of(context).pop(false),
+                  child: Container(
+                    height: 50,
+                    width: 100,
+                    decoration: const BoxDecoration(
+                      // image: DecorationImage(
+                      //     image: AssetImage(imageUtilController.noImage),
+                      //     fit: BoxFit.cover),
+                      // color: const Color(0xFFD8FD91),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(
+                          100,
+                        ),
+                      ),
+                      border: GradientBoxBorder(
+                        gradient: LinearGradient(
+                          colors: [
+                            Color(0xFF9188FB),
+                            Color(0xFFA23BED),
+                          ],
+                        ),
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        "No",
+                        style: GoogleFonts.lexend(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontSize: 17,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () => SystemNavigator.pop(),
+                  child: Container(
+                    height: 50,
+                    width: 100,
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Color(0xFF9188FB),
+                          Color(0xFFA23BED),
+                        ],
+                      ),
+                      // color: const Color(0xFFD8FD91),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(
+                          100,
+                        ),
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        "Yes",
+                        style: GoogleFonts.lexend(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontSize: 17,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
 
 //home screen -- where all available contacts are shown
 class HomeScreen extends StatefulWidget {
@@ -25,6 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // for storing searched items
   final List<ChatUser> _searchList = [];
+
   // for storing search status
   bool _isSearching = false;
 
@@ -51,147 +195,206 @@ class _HomeScreenState extends State<HomeScreen> {
       return Future.value(message);
     });
   }
+  int selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      //for hiding keyboard when a tap is detected on screen
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: WillPopScope(
-        //if search is on & back button is pressed then close search
-        //or else simple close current screen on back button click
-        onWillPop: () {
-          if (_isSearching) {
-            setState(() {
-              _isSearching = !_isSearching;
-            });
-            return Future.value(false);
-          } else {
-            return Future.value(true);
-          }
-        },
-        child: Scaffold(
-          //app bar
-          appBar: AppBar(
-            leading: const Icon(CupertinoIcons.home),
-            title: _isSearching
-                ? TextField(
-                    decoration: const InputDecoration(
-                        border: InputBorder.none, hintText: 'Name, Email, ...'),
-                    autofocus: true,
-                    style: const TextStyle(fontSize: 17, letterSpacing: 0.5),
-                    //when search text changes then updated search list
-                    onChanged: (val) {
-                      //search logic
-                      _searchList.clear();
+    return WillPopScope(
+      onWillPop: () => _onWillPop(context),
+      child: GestureDetector(
+        //for hiding keyboard when a tap is detected on screen
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: WillPopScope(
+          //if search is on & back button is pressed then close search
+          //or else simple close current screen on back button click
+          onWillPop: () {
+            if (_isSearching) {
+              setState(() {
+                _isSearching = !_isSearching;
+              });
+              return Future.value(false);
+            } else {
+              return Future.value(true);
+            }
+          },
+          child: Scaffold(
+            bottomNavigationBar: FlashyTabBar(
+              backgroundColor: allWidget.appBarColor,
+              selectedIndex: selectedIndex,
+              showElevation: true,
+              onItemSelected: (index) => setState(() {
+                selectedIndex = index;
+              }),
+              items: [
+                FlashyTabBarItem(
+                  icon: const Icon(Icons.home_filled),
+                  title: const Text('Home'),
+                ),
+                FlashyTabBarItem(
+                  icon: const Icon(Icons.add_comment),
+                  title: const Text('Add User'),
+                ),
+                FlashyTabBarItem(
+                  icon: const Icon(Icons.search),
+                  title: const Text('Search'),
+                ),
+                FlashyTabBarItem(
+                  icon: const Icon(Icons.settings),
+                  title: const Text('Settings'),
+                ),
+                FlashyTabBarItem(
+                  icon: const Icon(Icons.logout),
+                  title: const Text('LogOut'),
+                ),
+              ],
+            ),
+            //app bar
+            appBar: AppBar(
+              backgroundColor: allWidget.appBarColor,
+              elevation: 0,
+              leading: const Icon(
+                CupertinoIcons.home,
+              ),
+              title: _isSearching
+                  ? TextField(
+                      decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Name, Email, ...'),
+                      autofocus: true,
+                      style:
+                          GoogleFonts.lexend(fontSize: 17, letterSpacing: 0.5),
+                      //when search text changes then updated search list
+                      onChanged: (val) {
+                        //search logic
+                        _searchList.clear();
 
-                      for (var i in _list) {
-                        if (i.name.toLowerCase().contains(val.toLowerCase()) ||
-                            i.email.toLowerCase().contains(val.toLowerCase())) {
-                          _searchList.add(i);
-                          setState(() {
-                            _searchList;
-                          });
-                        }
-                      }
-                    },
-                  )
-                : const Text('We Chat'),
-            actions: [
-              //search user button
-              IconButton(
-                  onPressed: () {
-                    setState(() {
-                      _isSearching = !_isSearching;
-                    });
-                  },
-                  icon: Icon(_isSearching
-                      ? CupertinoIcons.clear_circled_solid
-                      : Icons.search)),
-
-              //more features button
-              IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => ProfileScreen(user: APIs.me)));
-                  },
-                  icon: const Icon(Icons.more_vert))
-            ],
-          ),
-
-          //floating button to add new user
-          floatingActionButton: Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: FloatingActionButton(
-                onPressed: () {
-                  _addChatUserDialog();
-                },
-                child: const Icon(Icons.add_comment_rounded)),
-          ),
-
-          //body
-          body: StreamBuilder(
-            stream: APIs.getMyUsersId(),
-
-            //get id of only known users
-            builder: (context, snapshot) {
-              switch (snapshot.connectionState) {
-                //if data is loading
-                case ConnectionState.waiting:
-                case ConnectionState.none:
-                  return const Center(child: CircularProgressIndicator());
-
-                //if some or all data is loaded then show it
-                case ConnectionState.active:
-                case ConnectionState.done:
-                  return StreamBuilder(
-                    stream: APIs.getAllUsers(
-                        snapshot.data?.docs.map((e) => e.id).toList() ?? []),
-
-                    //get only those user, who's ids are provided
-                    builder: (context, snapshot) {
-                      switch (snapshot.connectionState) {
-                        //if data is loading
-                        case ConnectionState.waiting:
-                        case ConnectionState.none:
-                        // return const Center(
-                        //     child: CircularProgressIndicator());
-
-                        //if some or all data is loaded then show it
-                        case ConnectionState.active:
-                        case ConnectionState.done:
-                          final data = snapshot.data?.docs;
-                          _list = data
-                                  ?.map((e) => ChatUser.fromJson(e.data()))
-                                  .toList() ??
-                              [];
-
-                          if (_list.isNotEmpty) {
-                            return ListView.builder(
-                                itemCount: _isSearching
-                                    ? _searchList.length
-                                    : _list.length,
-                                padding: EdgeInsets.only(top: mq.height * .01),
-                                physics: const BouncingScrollPhysics(),
-                                itemBuilder: (context, index) {
-                                  return ChatUserCard(
-                                      user: _isSearching
-                                          ? _searchList[index]
-                                          : _list[index]);
-                                });
-                          } else {
-                            return const Center(
-                              child: Text('No Connections Found!',
-                                  style: TextStyle(fontSize: 20)),
-                            );
+                        for (var i in _list) {
+                          if (i.name
+                                  .toLowerCase()
+                                  .contains(val.toLowerCase()) ||
+                              i.email
+                                  .toLowerCase()
+                                  .contains(val.toLowerCase())) {
+                            _searchList.add(i);
+                            setState(() {
+                              _searchList;
+                            });
                           }
-                      }
+                        }
+                      },
+                    )
+                  : Text('Chats', style: GoogleFonts.lexend()),
+              actions: [
+                //search user button
+                IconButton(
+                    onPressed: () {
+                      setState(() {
+                        _isSearching = !_isSearching;
+                      });
                     },
-                  );
-              }
-            },
+                    icon: Icon(_isSearching
+                        ? CupertinoIcons.clear_circled_solid
+                        : Icons.search)),
+
+                //more features button
+                IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => ProfileScreen(user: APIs.me)));
+                    },
+                    icon: const Icon(Icons.more_vert))
+              ],
+            ),
+
+            //floating button to add new user
+            floatingActionButton: Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: FloatingActionButton(
+                  onPressed: () {
+                    _addChatUserDialog();
+                  },
+                  child: const Icon(Icons.add_comment_rounded)),
+            ),
+
+            //body
+            body: Container(
+              decoration: BoxDecoration(
+                  // image: DecorationImage(
+                  //     image: AssetImage("assets/icons/background.jpg"),
+                  //     fit: BoxFit.cover),
+                  color: allWidget.homeScreenBackgroundColor
+                  // gradient: LinearGradient(
+                  //   begin: Alignment.topCenter,
+                  //   end: Alignment.bottomCenter,
+                  //   colors: allWidget.homeScreenBackgroundColor,
+                  // ),
+                  ),
+              child: StreamBuilder(
+                stream: APIs.getMyUsersId(),
+
+                //get id of only known users
+                builder: (context, snapshot) {
+                  switch (snapshot.connectionState) {
+                    //if data is loading
+                    case ConnectionState.waiting:
+                    case ConnectionState.none:
+                      return const Center(child: CircularProgressIndicator());
+
+                    //if some or all data is loaded then show it
+                    case ConnectionState.active:
+                    case ConnectionState.done:
+                      return StreamBuilder(
+                        stream: APIs.getAllUsers(
+                            snapshot.data?.docs.map((e) => e.id).toList() ??
+                                []),
+
+                        //get only those user, who's ids are provided
+                        builder: (context, snapshot) {
+                          switch (snapshot.connectionState) {
+                            //if data is loading
+                            case ConnectionState.waiting:
+                            case ConnectionState.none:
+                            // return const Center(
+                            //     child: CircularProgressIndicator());
+
+                            //if some or all data is loaded then show it
+                            case ConnectionState.active:
+                            case ConnectionState.done:
+                              final data = snapshot.data?.docs;
+                              _list = data
+                                      ?.map((e) => ChatUser.fromJson(e.data()))
+                                      .toList() ??
+                                  [];
+
+                              if (_list.isNotEmpty) {
+                                return ListView.builder(
+                                    itemCount: _isSearching
+                                        ? _searchList.length
+                                        : _list.length,
+                                    padding:
+                                        EdgeInsets.only(top: mq.height * .01),
+                                    physics: const BouncingScrollPhysics(),
+                                    itemBuilder: (context, index) {
+                                      return ChatUserCard(
+                                          user: _isSearching
+                                              ? _searchList[index]
+                                              : _list[index]);
+                                    });
+                              } else {
+                                return Center(
+                                  child: Text('No Connections Found!',
+                                      style: GoogleFonts.lexend(fontSize: 20)),
+                                );
+                              }
+                          }
+                        },
+                      );
+                  }
+                },
+              ),
+            ),
           ),
         ),
       ),
@@ -213,13 +416,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
               //title
               title: Row(
-                children: const [
+                children: [
                   Icon(
                     Icons.person_add,
                     color: Colors.blue,
                     size: 28,
                   ),
-                  Text('  Add User')
+                  Text(
+                    '  Add User',
+                    style: GoogleFonts.lexend(),
+                  )
                 ],
               ),
 
@@ -242,8 +448,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       //hide alert dialog
                       Navigator.pop(context);
                     },
-                    child: const Text('Cancel',
-                        style: TextStyle(color: Colors.blue, fontSize: 16))),
+                    child: Text('Cancel',
+                        style: GoogleFonts.lexend(
+                            color: Colors.blue, fontSize: 16))),
 
                 //add button
                 MaterialButton(
@@ -259,9 +466,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         });
                       }
                     },
-                    child: const Text(
+                    child: Text(
                       'Add',
-                      style: TextStyle(color: Colors.blue, fontSize: 16),
+                      style:
+                          GoogleFonts.lexend(color: Colors.blue, fontSize: 16),
                     ))
               ],
             ));

@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gallery_saver/gallery_saver.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../api/apis.dart';
 import '../helper/dialogs.dart';
@@ -63,7 +64,7 @@ class _MessageCardState extends State<MessageCard> {
                 //show text
                 Text(
                     widget.message.msg,
-                    style: const TextStyle(fontSize: 15, color: Colors.black87),
+                    style:  GoogleFonts.lexend(fontSize: 15, color: Colors.black87),
                   )
                 :
                 //show image
@@ -88,7 +89,7 @@ class _MessageCardState extends State<MessageCard> {
           child: Text(
             MyDateUtil.getFormattedTime(
                 context: context, time: widget.message.sent),
-            style: const TextStyle(fontSize: 13, color: Colors.black54),
+            style:  GoogleFonts.lexend(fontSize: 13, color: Colors.black54),
           ),
         ),
       ],
@@ -117,7 +118,7 @@ class _MessageCardState extends State<MessageCard> {
             Text(
               MyDateUtil.getFormattedTime(
                   context: context, time: widget.message.sent),
-              style: const TextStyle(fontSize: 13, color: Colors.black54),
+              style:  GoogleFonts.lexend(fontSize: 13, color: Colors.black54),
             ),
           ],
         ),
@@ -143,7 +144,7 @@ class _MessageCardState extends State<MessageCard> {
                 //show text
                 Text(
                     widget.message.msg,
-                    style: const TextStyle(fontSize: 15, color: Colors.black87),
+                    style:  GoogleFonts.lexend(fontSize: 15, color: Colors.black87),
                   )
                 :
                 //show image
@@ -300,13 +301,13 @@ class _MessageCardState extends State<MessageCard> {
 
               //title
               title: Row(
-                children: const [
+                children:  [
                   Icon(
                     Icons.message,
                     color: Colors.blue,
                     size: 28,
                   ),
-                  Text(' Update Message')
+                  Text(' Update Message',style: GoogleFonts.lexend(),)
                 ],
               ),
 
@@ -328,9 +329,9 @@ class _MessageCardState extends State<MessageCard> {
                       //hide alert dialog
                       Navigator.pop(context);
                     },
-                    child: const Text(
+                    child:  Text(
                       'Cancel',
-                      style: TextStyle(color: Colors.blue, fontSize: 16),
+                      style: GoogleFonts.lexend(color: Colors.blue, fontSize: 16),
                     )),
 
                 //update button
@@ -340,9 +341,9 @@ class _MessageCardState extends State<MessageCard> {
                       Navigator.pop(context);
                       APIs.updateMessage(widget.message, updatedMsg);
                     },
-                    child: const Text(
+                    child:  Text(
                       'Update',
-                      style: TextStyle(color: Colors.blue, fontSize: 16),
+                      style: GoogleFonts.lexend(color: Colors.blue, fontSize: 16),
                     ))
               ],
             ));
@@ -371,7 +372,7 @@ class _OptionItem extends StatelessWidget {
             icon,
             Flexible(
                 child: Text('    $name',
-                    style: const TextStyle(
+                    style:  GoogleFonts.lexend(
                         fontSize: 15,
                         color: Colors.black54,
                         letterSpacing: 0.5)))

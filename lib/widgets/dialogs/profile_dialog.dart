@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../main.dart';
 import '../../models/chat_user.dart';
@@ -44,7 +45,7 @@ class ProfileDialog extends StatelessWidget {
                 top: mq.height * .02,
                 width: mq.width * .55,
                 child: Text(user.name,
-                    style: const TextStyle(
+                    style:  GoogleFonts.lexend(
                         fontSize: 18, fontWeight: FontWeight.w500)),
               ),
 
