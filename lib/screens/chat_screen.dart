@@ -64,9 +64,9 @@ class _ChatScreenState extends State<ChatScreen> {
 
             //body
             body: Container(
-              decoration: const BoxDecoration(
+              decoration:  BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/icons/background.jpg'),
+                  image: AssetImage(appImageWidget.background_Image),
                   fit: BoxFit.cover,
                   opacity: 0.3,
                 ),

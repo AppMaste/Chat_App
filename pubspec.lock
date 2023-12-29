@@ -321,14 +321,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.6.17"
-  flashy_tab_bar2:
-    dependency: "direct main"
-    description:
-      name: flashy_tab_bar2
-      sha256: "895affd69b757ae2a1461ddc42a3c04954a5bb4e2292373697e40c377e836153"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.6"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -552,6 +544,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.1+1"
+  inkblob_navigation_bar:
+    dependency: "direct main"
+    description:
+      name: inkblob_navigation_bar
+      sha256: "805862cea9a05cda773d2a4f0a7ebde083765833a331da91cc4b82666410d54d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.2"
   js:
     dependency: transitive
     description:

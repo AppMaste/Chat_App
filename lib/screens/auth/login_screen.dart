@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:chat_demo_app/widgets/AppAllWidget/height.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -93,6 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ScreenSize.sizerInit(context);
     //initializing media query (for getting device screen size)
     // mq = MediaQuery.of(context).size;
 
@@ -100,10 +102,10 @@ class _LoginScreenState extends State<LoginScreen> {
       backgroundColor: Colors.black,
       //app bar
       appBar: AppBar(
-        backgroundColor: allWidget.appBarColor,
+        backgroundColor: appColorWidget.blackColor,
         automaticallyImplyLeading: false,
         title: Text(
-          'Welcome to Chat',
+          'Welcome to ChatMingle',
           style: GoogleFonts.lexend(
             color: Colors.white,
           ),
@@ -113,12 +115,7 @@ class _LoginScreenState extends State<LoginScreen> {
       //body
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: allWidget.backgroundColor,
-          ),
-        ),
+            ),
         height: double.maxFinite,
         width: double.maxFinite,
         child: Stack(
@@ -127,52 +124,60 @@ class _LoginScreenState extends State<LoginScreen> {
             //app logo
             AnimatedPositioned(
               top: mq.height * .15,
-              right: _isAnimate ? mq.width * .25 : -mq.width * .5,
-              width: mq.width * .5,
+              right: _isAnimate ? mq.width * .13 : -mq.width * .5,
+              // width: mq.width * .5,
               duration: const Duration(seconds: 1),
-              child: Image.asset('images/chat.png'),
+              child: Image.asset(appImageWidget.logo),
             ),
 
             //google login button
             Positioned(
-              bottom: mq.height * .15,
+              bottom: mq.height * .20,
               left: mq.width * .05,
               width: mq.width * .9,
               height: mq.height * .06,
-              child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  // onPrimary: allWidget.buttonColor,
-                  elevation: 10,
-                  // Elevation
-                  shadowColor: allWidget.whiteColor,
-                  backgroundColor: allWidget.appBarColor,
-                  shape: const StadiumBorder(),
-                  // elevation: 1,
-                ),
-                onPressed: () {
+              child: GestureDetector(
+                onTap: () {
                   _handleGoogleBtnClick();
                 },
-
-                //google icon
-                icon: Image.asset('images/google.png', height: mq.height * .03),
-
-                //login with google label
-                label: RichText(
-                  text: TextSpan(
-                    style:
-                        GoogleFonts.lexend(color: Colors.black, fontSize: 16),
+                child: Container(
+                  height: mq.height,
+                  width: mq.width * 5,
+                  decoration: BoxDecoration(
+                      color: appColorWidget.appBarColor,
+                      borderRadius: BorderRadius.circular(100),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.grey,
+                          blurRadius: 10,
+                          offset: Offset(0, 4),
+                        )
+                      ]),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      TextSpan(
-                        text: 'Login with ',
-                        style: GoogleFonts.lexend(
-                          color: allWidget.whiteColor,
-                        ),
-                      ),
-                      TextSpan(
-                        text: 'Google',
-                        style: GoogleFonts.lexend(
-                          fontWeight: FontWeight.w500,
-                          color: allWidget.whiteColor,
+                      Image.asset(appImageWidget.googleImage,
+                          height: mq.height * .04),
+                   SizedBox(width: ScreenSize.fSize_20()),
+                  RichText(
+                        text: TextSpan(
+                          style:
+                              GoogleFonts.lexend(color: Colors.black, fontSize: 16),
+                          children: [
+                            TextSpan(
+                              text: 'Login with ',
+                              style: GoogleFonts.lexend(
+                                color: appColorWidget.whiteColor,
+                              ),
+                            ),
+                            TextSpan(
+                              text: 'Google',
+                              style: GoogleFonts.lexend(
+                                fontWeight: FontWeight.bold,
+                                color: appColorWidget.whiteColor,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],

@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:chat_demo_app/widgets/AppAllWidget/Details.dart';
+import 'package:chat_demo_app/widgets/AppAllWidget/height.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -33,11 +34,15 @@ class _SplashScreenState extends State<SplashScreen> {
         log('\nUser: ${APIs.auth.currentUser}');
         //navigate to home screen
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (_) => const HomeScreen()));
+          context,
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+        );
       } else {
         //navigate to login screen
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (_) => const LoginScreen()));
+          context,
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
+        );
       }
     });
   }
@@ -48,28 +53,25 @@ class _SplashScreenState extends State<SplashScreen> {
     mq = MediaQuery.of(context).size;
 
     return Scaffold(
+      backgroundColor: Colors.black /**/,
       //body
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: allWidget.backgroundColor,
-          ),
-        ),
+            // ),
+            ),
         height: double.maxFinite,
         width: double.maxFinite,
         child: Stack(
           children: [
             Positioned(
-              top: mq.height * .15,
-              right: mq.width * .25,
-              width: mq.width * .5,
-              child: Image.asset('images/chat.png'),
+              top: mq.height * .20,
+              right: mq.width * .15,
+              // width: mq.width * .5,
+              child: Image.asset(appImageWidget.logo),
             ),
             //google login button
             Positioned(
-              bottom: mq.height * .15,
+              bottom: mq.height * .25,
               width: mq.width,
               child: Text(
                 'MADE IN INDIA WITH ❤️',

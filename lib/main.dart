@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:chat_demo_app/screens/demo%20Page.dart';
 import 'package:chat_demo_app/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -27,7 +28,6 @@ void main() {
   });
 }
 
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
         title: 'Chat',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-            appBarTheme:  AppBarTheme(
+            appBarTheme: AppBarTheme(
           centerTitle: true,
           elevation: 1,
           iconTheme: const IconThemeData(color: Colors.black),

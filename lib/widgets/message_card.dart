@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chat_demo_app/widgets/AppAllWidget/Details.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gallery_saver/gallery_saver.dart';
@@ -132,7 +133,7 @@ class _MessageCardState extends State<MessageCard> {
             margin: EdgeInsets.symmetric(
                 horizontal: mq.width * .04, vertical: mq.height * .01),
             decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 218, 255, 176),
+                color: appColorWidget.appBarColor,
                 border: Border.all(color: Colors.lightGreen),
                 //making borders curved
                 borderRadius: const BorderRadius.only(

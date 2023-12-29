@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chat_demo_app/widgets/AppAllWidget/height.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ import '../api/apis.dart';
 import '../helper/dialogs.dart';
 import '../main.dart';
 import '../models/chat_user.dart';
+import '../widgets/AppAllWidget/Details.dart';
 import 'auth/login_screen.dart';
 
 //profile screen -- to show signed in user info
@@ -37,42 +39,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
       // for hiding keyboard
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          backgroundColor: appColorWidget.homeScreenBackgroundColor,
           //app bar
-          appBar: AppBar(title:  Text('Profile Screen',style: GoogleFonts.lexend(),)),
+          appBar: AppBar(
+              title: Text(
+            'Edite Profile',
+            style: GoogleFonts.lexend(),
+          )),
 
           //floating button to log out
-          floatingActionButton: Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: FloatingActionButton.extended(
-                backgroundColor: Colors.redAccent,
-                onPressed: () async {
-                  //for showing progress dialog
-                  Dialogs.showProgressBar(context);
-
-                  await APIs.updateActiveStatus(false);
-
-                  //sign out from app
-                  await APIs.auth.signOut().then((value) async {
-                    await GoogleSignIn().signOut().then((value) {
-                      //for hiding progress dialog
-                      Navigator.pop(context);
-
-                      //for moving to home screen
-                      Navigator.pop(context);
-
-                      APIs.auth = FirebaseAuth.instance;
-
-                      //replacing home screen with login screen
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => const LoginScreen()));
-                    });
-                  });
-                },
-                icon: const Icon(Icons.logout),
-                label:  Text('Logout',style: GoogleFonts.lexend(),)),
-          ),
+          // floatingActionButton: Padding(
+          //   padding: const EdgeInsets.only(bottom: 10),
+          //   child: FloatingActionButton.extended(
+          //       backgroundColor: Colors.redAccent,
+          //       onPressed: () async {
+          //         //for showing progress dialog
+          //         Dialogs.showProgressBar(context);
+          //
+          //         await APIs.updateActiveStatus(false);
+          //
+          //         //sign out from app
+          //         await APIs.auth.signOut().then((value) async {
+          //           await GoogleSignIn().signOut().then((value) {
+          //             //for hiding progress dialog
+          //             Navigator.pop(context);
+          //
+          //             //for moving to home screen
+          //             Navigator.pop(context);
+          //
+          //             APIs.auth = FirebaseAuth.instance;
+          //
+          //             //replacing home screen with login screen
+          //             Navigator.pushReplacement(
+          //                 context,
+          //                 MaterialPageRoute(
+          //                     builder: (_) => const LoginScreen()));
+          //           });
+          //         });
+          //       },
+          //       icon: const Icon(Icons.logout),
+          //       label: Text(
+          //         'Logout',
+          //         style: GoogleFonts.lexend(),
+          //       )),
+          // ),
 
           //body
           body: Form(
@@ -91,7 +102,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         //profile picture
                         _image != null
                             ?
-
                             //local image
                             ClipRRect(
                                 borderRadius:
@@ -139,7 +149,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     // user email label
                     Text(widget.user.email,
-                        style:  GoogleFonts.lexend(
+                        style: GoogleFonts.lexend(
                             color: Colors.black54, fontSize: 16)),
 
                     // for adding some space
@@ -152,13 +162,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       validator: (val) => val != null && val.isNotEmpty
                           ? null
                           : 'Required Field',
+                      style: GoogleFonts.lexend(),
                       decoration: InputDecoration(
                           prefixIcon:
                               const Icon(Icons.person, color: Colors.blue),
                           border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12)),
+                            borderSide:
+                                BorderSide(color: appColorWidget.blackColor),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                           hintText: 'eg. Happy Singh',
-                          label:  Text('Name',style: GoogleFonts.lexend(),)),
+                          label: Text(
+                            'Name',
+                            style: GoogleFonts.lexend(
+                              color: appColorWidget.blackColor,
+                            ),
+                          )),
                     ),
 
                     // for adding some space
@@ -171,36 +190,78 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       validator: (val) => val != null && val.isNotEmpty
                           ? null
                           : 'Required Field',
+                      style: GoogleFonts.lexend(),
                       decoration: InputDecoration(
                           prefixIcon: const Icon(Icons.info_outline,
                               color: Colors.blue),
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12)),
                           hintText: 'eg. Feeling Happy',
-                          label:  Text('About',style: GoogleFonts.lexend(),)),
+                          hintStyle: GoogleFonts.lexend(),
+                          label: Text(
+                            'About',
+                            style: GoogleFonts.lexend(
+                              color: appColorWidget.blackColor,
+                            ),
+                          )),
                     ),
 
                     // for adding some space
                     SizedBox(height: mq.height * .05),
 
                     // update profile button
-                    ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                          shape: const StadiumBorder(),
-                          minimumSize: Size(mq.width * .5, mq.height * .06)),
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          _formKey.currentState!.save();
-                          APIs.updateUserInfo().then((value) {
-                            Dialogs.showSnackbar(
-                                context, 'Profile Updated Successfully!');
-                          });
-                        }
-                      },
-                      icon: const Icon(Icons.edit, size: 28),
-                      label:
-                           Text('UPDATE', style: GoogleFonts.lexend(fontSize: 16)),
+                    Container(
+                      height: ScreenSize.fSize_50(),
+                      width: ScreenSize.fSize_160(),
+                      decoration: BoxDecoration(
+                          color: appColorWidget.appBarColor,
+                          borderRadius: BorderRadius.circular(100),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black38,
+                              blurRadius: 10,
+                              offset: Offset(0, 4),
+                            )
+                          ]),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.edit,
+                              size: 28, color: appColorWidget.whiteColor),
+                          SizedBox(width: ScreenSize.fSize_10()),
+                          Text(
+                            'UPDATE',
+                            style: GoogleFonts.lexend(
+                              fontSize: 16,
+                              color: appColorWidget.whiteColor,
+                            ),
+                          ),
+                        ],
+                      ),
                     )
+
+                    // ElevatedButton.icon(
+                    //   style: ElevatedButton.styleFrom(
+                    //       shape: const StadiumBorder(),
+                    //       backgroundColor: appColorWidget.appBarColor,
+                    //       minimumSize: Size(mq.width * .5, mq.height * .06)),
+                    //   onPressed: () {
+                    //     if (_formKey.currentState!.validate()) {
+                    //       _formKey.currentState!.save();
+                    //       APIs.updateUserInfo().then((value) {
+                    //         Dialogs.showSnackbar(
+                    //             context, 'Profile Updated Successfully!');
+                    //       });
+                    //     }
+                    //   },
+                    //   icon: Icon(Icons.edit,
+                    //       size: 28, color: appColorWidget.whiteColor),
+                    //   label: Text('UPDATE',
+                    //       style: GoogleFonts.lexend(
+                    //         fontSize: 16,
+                    //         color: appColorWidget.whiteColor,
+                    //       )),
+                    // )
                   ],
                 ),
               ),
@@ -223,9 +284,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 EdgeInsets.only(top: mq.height * .03, bottom: mq.height * .05),
             children: [
               //pick profile picture label
-               Text('Pick Profile Picture',
+              Text('Pick Profile Picture',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.lexend(fontSize: 20, fontWeight: FontWeight.w500)),
+                  style: GoogleFonts.lexend(
+                      fontSize: 20, fontWeight: FontWeight.w500)),
 
               //for adding some space
               SizedBox(height: mq.height * .02),

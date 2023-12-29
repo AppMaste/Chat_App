@@ -1,9 +1,12 @@
 import 'dart:developer';
-import 'package:flashy_tab_bar2/flashy_tab_bar2.dart';
+import 'package:chat_demo_app/widgets/AppAllWidget/widgets.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:gradient_borders/box_borders/gradient_box_border.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
 import '../api/apis.dart';
@@ -11,8 +14,12 @@ import '../helper/dialogs.dart';
 import '../main.dart';
 import '../models/chat_user.dart';
 import '../widgets/AppAllWidget/Details.dart';
+import '../widgets/AppAllWidget/height.dart';
 import '../widgets/chat_user_card.dart';
+import 'auth/login_screen.dart';
 import 'profile_screen.dart';
+
+List emailList = [];
 
 Future<bool> _onWillPop(BuildContext context) async {
   bool? exitResult = await showDialog(
@@ -30,48 +37,33 @@ Scaffold _buildExitDialog(BuildContext context) {
         height: 250,
         width: 300,
         decoration: BoxDecoration(
-          color: Colors.black,
-          border: GradientBoxBorder(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                const Color(0xFF9188FB).withOpacity(0.6),
-                const Color(0xFFA23BED).withOpacity(0.6),
-              ],
-            ),
-          ),
+          color: appColorWidget.homeScreenBackgroundColor,
           borderRadius: BorderRadius.circular(15),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF9B5AF3).withOpacity(0.7),
-              blurRadius: 50,
-              spreadRadius: 10,
-            ),
+                color: appColorWidget.whiteColor.withOpacity(0.2),
+                blurRadius: 10,
+                spreadRadius: 5,
+                offset: const Offset(0, 2)),
           ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            GradientText(
+            Text(
               "EXIT",
               style: GoogleFonts.lexend(
                 fontWeight: FontWeight.w700,
-                color: Colors.white,
+                color: appColorWidget.blackColor,
                 fontSize: 25,
               ),
-              colors: const [
-                Color(0xFF9188FB),
-                Color(0xFFA23BED),
-              ],
-              gradientDirection: GradientDirection.ttb,
             ),
             Text(
               "Do you really want to Exit?",
               textAlign: TextAlign.center,
               style: GoogleFonts.lexend(
                 fontWeight: FontWeight.w400,
-                color: Colors.white,
+                color: appColorWidget.blackColor,
                 fontSize: 20,
               ),
             ),
@@ -83,31 +75,22 @@ Scaffold _buildExitDialog(BuildContext context) {
                   child: Container(
                     height: 50,
                     width: 100,
-                    decoration: const BoxDecoration(
-                      // image: DecorationImage(
-                      //     image: AssetImage(imageUtilController.noImage),
-                      //     fit: BoxFit.cover),
-                      // color: const Color(0xFFD8FD91),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(
-                          100,
-                        ),
+                    decoration: BoxDecoration(
+                      color: appColorWidget.homeScreenBackgroundColor,
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(100),
                       ),
-                      border: GradientBoxBorder(
-                        gradient: LinearGradient(
-                          colors: [
-                            Color(0xFF9188FB),
-                            Color(0xFFA23BED),
-                          ],
-                        ),
-                      ),
+                      boxShadow: const [
+                        BoxShadow(color: Colors.black, blurRadius: 5)
+                      ],
+                      border: Border.all(color: appColorWidget.blackColor),
                     ),
                     child: Center(
                       child: Text(
                         "No",
                         style: GoogleFonts.lexend(
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: appColorWidget.blackColor,
                           fontSize: 17,
                         ),
                       ),
@@ -119,26 +102,22 @@ Scaffold _buildExitDialog(BuildContext context) {
                   child: Container(
                     height: 50,
                     width: 100,
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Color(0xFF9188FB),
-                          Color(0xFFA23BED),
-                        ],
+                    decoration: BoxDecoration(
+                      color: appColorWidget.homeScreenBackgroundColor,
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(100),
                       ),
-                      // color: const Color(0xFFD8FD91),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(
-                          100,
-                        ),
-                      ),
+                      boxShadow: const [
+                        BoxShadow(color: Colors.black, blurRadius: 5)
+                      ],
+                      border: Border.all(color: appColorWidget.blackColor),
                     ),
                     child: Center(
                       child: Text(
                         "Yes",
                         style: GoogleFonts.lexend(
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: appColorWidget.blackColor,
                           fontSize: 17,
                         ),
                       ),
@@ -165,12 +144,14 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   // for storing all users
   List<ChatUser> _list = [];
+  List<ChatUser> empty = [];
 
   // for storing searched items
   final List<ChatUser> _searchList = [];
 
   // for storing search status
   bool _isSearching = false;
+  var userFind = 0.obs;
 
   @override
   void initState() {
@@ -195,10 +176,16 @@ class _HomeScreenState extends State<HomeScreen> {
       return Future.value(message);
     });
   }
-  int selectedIndex = 0;
+
+  var home = true.obs;
+  var addUser = false.obs;
+  var search = false.obs;
+  var editeProfile = false.obs;
+  var logout = false.obs;
 
   @override
   Widget build(BuildContext context) {
+    ScreenSize.sizerInit(context);
     return WillPopScope(
       onWillPop: () => _onWillPop(context),
       child: GestureDetector(
@@ -218,43 +205,14 @@ class _HomeScreenState extends State<HomeScreen> {
             }
           },
           child: Scaffold(
-            bottomNavigationBar: FlashyTabBar(
-              backgroundColor: allWidget.appBarColor,
-              selectedIndex: selectedIndex,
-              showElevation: true,
-              onItemSelected: (index) => setState(() {
-                selectedIndex = index;
-              }),
-              items: [
-                FlashyTabBarItem(
-                  icon: const Icon(Icons.home_filled),
-                  title: const Text('Home'),
-                ),
-                FlashyTabBarItem(
-                  icon: const Icon(Icons.add_comment),
-                  title: const Text('Add User'),
-                ),
-                FlashyTabBarItem(
-                  icon: const Icon(Icons.search),
-                  title: const Text('Search'),
-                ),
-                FlashyTabBarItem(
-                  icon: const Icon(Icons.settings),
-                  title: const Text('Settings'),
-                ),
-                FlashyTabBarItem(
-                  icon: const Icon(Icons.logout),
-                  title: const Text('LogOut'),
-                ),
-              ],
-            ),
+            resizeToAvoidBottomInset: false,
             //app bar
             appBar: AppBar(
-              backgroundColor: allWidget.appBarColor,
+              // backgroundColor: allWidget.appBarColor,
               elevation: 0,
-              leading: const Icon(
-                CupertinoIcons.home,
-              ),
+              // leading: const Icon(
+              //   CupertinoIcons.home,
+              // ),
               title: _isSearching
                   ? TextField(
                       decoration: const InputDecoration(
@@ -283,7 +241,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         }
                       },
                     )
-                  : Text('Chats', style: GoogleFonts.lexend()),
+                  : Text('Chat Mingle', style: GoogleFonts.lexend()),
               actions: [
                 //search user button
                 IconButton(
@@ -295,104 +253,194 @@ class _HomeScreenState extends State<HomeScreen> {
                     icon: Icon(_isSearching
                         ? CupertinoIcons.clear_circled_solid
                         : Icons.search)),
-
-                //more features button
-                IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => ProfileScreen(user: APIs.me)));
-                    },
-                    icon: const Icon(Icons.more_vert))
               ],
-            ),
-
-            //floating button to add new user
-            floatingActionButton: Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: FloatingActionButton(
-                  onPressed: () {
-                    _addChatUserDialog();
-                  },
-                  child: const Icon(Icons.add_comment_rounded)),
             ),
 
             //body
             body: Container(
               decoration: BoxDecoration(
-                  // image: DecorationImage(
-                  //     image: AssetImage("assets/icons/background.jpg"),
-                  //     fit: BoxFit.cover),
-                  color: allWidget.homeScreenBackgroundColor
-                  // gradient: LinearGradient(
-                  //   begin: Alignment.topCenter,
-                  //   end: Alignment.bottomCenter,
-                  //   colors: allWidget.homeScreenBackgroundColor,
-                  // ),
+                  color: appColorWidget.homeScreenBackgroundColor),
+              child: Stack(
+                children: [
+                  // Bottom Navigation Container
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      height: ScreenSize.horizontalBlockSize! * 35,
+                      width: double.maxFinite,
+                      color: appColorWidget.whiteColor,
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                          bottom: ScreenSize.fSize_60(),
+                          left: ScreenSize.fSize_10(),
+                          right: ScreenSize.fSize_10(),
+                        ),
+                        child: Obx(
+                          () => Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              containerWidget.bottomContainer(
+                                context,
+                                "Home",
+                                appImageWidget.home_Image,
+                                home.value,
+                                () {
+                                  home.value = true;
+                                  addUser.value = false;
+                                  search.value = false;
+                                  editeProfile.value = false;
+                                  logout.value = false;
+                                  log("Pressed Home");
+                                },
+                              ),
+                              containerWidget.bottomContainer(
+                                context,
+                                "Add User",
+                                appImageWidget.user_Image,
+                                addUser.value,
+                                () {
+                                  home.value = false;
+                                  addUser.value = true;
+                                  search.value = false;
+                                  editeProfile.value = false;
+                                  logout.value = false;
+                                  _addChatUserDialog();
+                                  log("Pressed Add User");
+                                },
+                              ),
+                              // containerWidget.bottomContainer(
+                              //   context,
+                              //   "Search",
+                              //   appImageWidget.search_Image,
+                              //   search.value,
+                              //   () {
+                              //     home.value = false;
+                              //     addUser.value = false;
+                              //     search.value = true;
+                              //     editeProfile.value = false;
+                              //     logout.value = false;
+                              //     log("Pressed Search");
+                              //   },
+                              // ),
+                              containerWidget.bottomContainer(
+                                context,
+                                "Edite Profile",
+                                appImageWidget.edite_Profile_Image,
+                                editeProfile.value,
+                                () {
+                                  home.value = false;
+                                  addUser.value = false;
+                                  search.value = false;
+                                  editeProfile.value = true;
+                                  logout.value = false;
+                                  log("Pressed Edite Profile");
+                                  Get.to(() => ProfileScreen(user: APIs.me))
+                                      ?.then((value) {
+                                    editeProfile.value = false;
+                                    home.value = true;
+                                  });
+                                  // Navigator.push(
+                                  //     context,
+                                  //     MaterialPageRoute(
+                                  //         builder: (_) => ProfileScreen(user: APIs.me)));
+                                },
+                              ),
+                              containerWidget.bottomContainer(
+                                context,
+                                "logout",
+                                appImageWidget.logout_Image,
+                                logout.value,
+                                () {
+                                  home.value = false;
+                                  addUser.value = false;
+                                  search.value = false;
+                                  editeProfile.value = false;
+                                  logout.value = true;
+                                  log("Pressed Logout");
+                                  _logout();
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-              child: StreamBuilder(
-                stream: APIs.getMyUsersId(),
+                  Container(
+                    height: ScreenSize.horizontalBlockSize! * 155,
+                    color: Colors.transparent,
+                    child: StreamBuilder(
+                      stream: APIs.getMyUsersId(),
+                      //get id of only known users
+                      builder: (context, snapshot) {
+                        switch (snapshot.connectionState) {
+                          //if data is loading
+                          case ConnectionState.waiting:
+                          case ConnectionState.none:
+                            return const Center(
+                                child: CircularProgressIndicator());
 
-                //get id of only known users
-                builder: (context, snapshot) {
-                  switch (snapshot.connectionState) {
-                    //if data is loading
-                    case ConnectionState.waiting:
-                    case ConnectionState.none:
-                      return const Center(child: CircularProgressIndicator());
-
-                    //if some or all data is loaded then show it
-                    case ConnectionState.active:
-                    case ConnectionState.done:
-                      return StreamBuilder(
-                        stream: APIs.getAllUsers(
-                            snapshot.data?.docs.map((e) => e.id).toList() ??
-                                []),
-
-                        //get only those user, who's ids are provided
-                        builder: (context, snapshot) {
-                          switch (snapshot.connectionState) {
-                            //if data is loading
-                            case ConnectionState.waiting:
-                            case ConnectionState.none:
-                            // return const Center(
-                            //     child: CircularProgressIndicator());
-
-                            //if some or all data is loaded then show it
-                            case ConnectionState.active:
-                            case ConnectionState.done:
-                              final data = snapshot.data?.docs;
-                              _list = data
-                                      ?.map((e) => ChatUser.fromJson(e.data()))
+                          //if some or all data is loaded then show it
+                          case ConnectionState.active:
+                          case ConnectionState.done:
+                            return StreamBuilder(
+                              stream: APIs.getAllUsers(snapshot.data?.docs
+                                      .map((e) => e.id)
                                       .toList() ??
-                                  [];
+                                  []),
 
-                              if (_list.isNotEmpty) {
-                                return ListView.builder(
-                                    itemCount: _isSearching
-                                        ? _searchList.length
-                                        : _list.length,
-                                    padding:
-                                        EdgeInsets.only(top: mq.height * .01),
-                                    physics: const BouncingScrollPhysics(),
-                                    itemBuilder: (context, index) {
-                                      return ChatUserCard(
-                                          user: _isSearching
-                                              ? _searchList[index]
-                                              : _list[index]);
-                                    });
-                              } else {
-                                return Center(
-                                  child: Text('No Connections Found!',
-                                      style: GoogleFonts.lexend(fontSize: 20)),
-                                );
-                              }
-                          }
-                        },
-                      );
-                  }
-                },
+                              //get only those user, who's ids are provided
+                              builder: (context, snapshot) {
+                                switch (snapshot.connectionState) {
+                                  //if data is loading
+                                  case ConnectionState.waiting:
+                                  case ConnectionState.none:
+                                  // return const Center(
+                                  //     child: CircularProgressIndicator());
+
+                                  //if some or all data is loaded then show it
+                                  case ConnectionState.active:
+                                  case ConnectionState.done:
+                                    final data = snapshot.data?.docs;
+                                    _list = data
+                                            ?.map((e) =>
+                                                ChatUser.fromJson(e.data()))
+                                            .toList() ??
+                                        [];
+
+                                    if (_list.isNotEmpty) {
+                                      return ListView.builder(
+                                          itemCount: _isSearching
+                                              ? _searchList.length
+                                              : _list.length,
+                                          padding: EdgeInsets.only(
+                                              top: mq.height * .01),
+                                          physics:
+                                              const BouncingScrollPhysics(),
+                                          itemBuilder: (context, index) {
+                                            // emailList.addAll([_list[index].email]);
+                                            return ChatUserCard(
+                                              user: _isSearching
+                                                  ? _searchList[index]
+                                                  : _list[index],
+                                              // user: _list[index],
+                                            );
+                                          });
+                                    } else {
+                                      return Center(
+                                        child: Text('No Connections Found!',
+                                            style: GoogleFonts.lexend(
+                                                fontSize: 20)),
+                                      );
+                                    }
+                                }
+                              },
+                            );
+                        }
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -406,72 +454,192 @@ class _HomeScreenState extends State<HomeScreen> {
     String email = '';
 
     showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-              contentPadding: const EdgeInsets.only(
-                  left: 24, right: 24, top: 20, bottom: 10),
+      context: context,
+      builder: (_) => AlertDialog(
+        backgroundColor: appColorWidget.homeScreenBackgroundColor,
+        contentPadding:
+            const EdgeInsets.only(left: 24, right: 24, top: 20, bottom: 10),
 
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
 
-              //title
-              title: Row(
-                children: [
-                  Icon(
-                    Icons.person_add,
-                    color: Colors.blue,
-                    size: 28,
-                  ),
-                  Text(
-                    '  Add User',
-                    style: GoogleFonts.lexend(),
-                  )
+        //title
+        title: Row(
+          children: [
+            const Icon(
+              Icons.person_add,
+              color: Colors.blue,
+              size: 28,
+            ),
+            Text(
+              '  Add User',
+              style: GoogleFonts.lexend(),
+            )
+          ],
+        ),
+
+        //content
+        content: TextFormField(
+          maxLines: null,
+          onChanged: (value) => email = value,
+          decoration: InputDecoration(
+            hintText: 'Email Id',
+            hintStyle: GoogleFonts.lexend(color: appColorWidget.blackColor),
+            prefixIcon: const Icon(Icons.email, color: Colors.blue),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+          ),
+        ),
+
+        //actions
+        actions: [
+          //cancel button
+          MaterialButton(
+            onPressed: () {
+              //hide alert dialog
+              Navigator.pop(context);
+            },
+            child: Text(
+              'Cancel',
+              style: GoogleFonts.lexend(color: appColorWidget.blackColor, fontSize: 16),
+            ),
+          ),
+
+          //add button
+          MaterialButton(
+            onPressed: () async {
+              //hide alert dialog
+              Navigator.pop(context);
+              if (email.isNotEmpty) {
+                await APIs.addChatUser(email).then(
+                  (value) {
+                    if (!value) {
+                      Dialogs.showSnackbar(context, 'User does not Exists!');
+                    }
+                  },
+                );
+              }
+            },
+            child: Text(
+              'Add',
+              style: GoogleFonts.lexend(color: appColorWidget.blackColor, fontSize: 16),
+            ),
+          ),
+        ],
+      ),
+    ).then((value) {
+      addUser.value = false;
+      home.value = true;
+    });
+  }
+
+  void _logout() {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        backgroundColor: appColorWidget.homeScreenBackgroundColor,
+        contentPadding:
+            const EdgeInsets.only(left: 24, right: 24, top: 20, bottom: 10),
+
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+
+        //title
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Logout',
+              style: GoogleFonts.lexend(),
+            ),
+            SizedBox(height: ScreenSize.fSize_20()),
+            Text(
+              'Are you sure you want to logout?',
+              style: GoogleFonts.lexend(
+                fontSize: ScreenSize.fSize_14(),
+              ),
+            ),
+          ],
+        ),
+
+        //actions
+        actions: [
+          //cancel button
+          GestureDetector(
+            onTap: () async {
+              // Navigator.pop(context);
+              Get.back();
+            },
+            child: Container(height: ScreenSize.fSize_40(),
+              width: ScreenSize.fSize_80(),
+              decoration: BoxDecoration(
+                color: appColorWidget.homeScreenBackgroundColor,
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(100),
+                ),
+                boxShadow: const [
+                  BoxShadow(color: Colors.black, blurRadius: 5)
                 ],
+                border: Border.all(color: appColorWidget.blackColor),
               ),
-
-              //content
-              content: TextFormField(
-                maxLines: null,
-                onChanged: (value) => email = value,
-                decoration: InputDecoration(
-                    hintText: 'Email Id',
-                    prefixIcon: const Icon(Icons.email, color: Colors.blue),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15))),
+              child: Center(
+                child: Text(
+                  'No',
+                  style: GoogleFonts.lexend(color: appColorWidget.blackColor, fontSize: 16),
+                ),
               ),
+            ),
+          ),
+          SizedBox(width: ScreenSize.fSize_10()),
+          GestureDetector(
+            onTap: () async  {
+              //         //for showing progress dialog
+              Dialogs.showProgressBar(context);
 
-              //actions
-              actions: [
-                //cancel button
-                MaterialButton(
-                    onPressed: () {
-                      //hide alert dialog
-                      Navigator.pop(context);
-                    },
-                    child: Text('Cancel',
-                        style: GoogleFonts.lexend(
-                            color: Colors.blue, fontSize: 16))),
+              await APIs.updateActiveStatus(false);
 
-                //add button
-                MaterialButton(
-                    onPressed: () async {
-                      //hide alert dialog
-                      Navigator.pop(context);
-                      if (email.isNotEmpty) {
-                        await APIs.addChatUser(email).then((value) {
-                          if (!value) {
-                            Dialogs.showSnackbar(
-                                context, 'User does not Exists!');
-                          }
-                        });
-                      }
-                    },
-                    child: Text(
-                      'Add',
-                      style:
-                          GoogleFonts.lexend(color: Colors.blue, fontSize: 16),
-                    ))
-              ],
-            ));
+              //sign out from app
+              await APIs.auth.signOut().then((value) async {
+                await GoogleSignIn().signOut().then((value) {
+                  //for hiding progress dialog
+                  Navigator.pop(context);
+
+                  //for moving to home screen
+                  Navigator.pop(context);
+
+                  APIs.auth = FirebaseAuth.instance;
+
+                  //replacing home screen with login screen
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (_) => const LoginScreen()));
+                });
+              });
+            },
+            child: Container(
+              height: ScreenSize.fSize_40(),
+              width: ScreenSize.fSize_80(),
+              decoration: BoxDecoration(
+                color: appColorWidget.homeScreenBackgroundColor,
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(100),
+                ),
+                boxShadow: const [
+                  BoxShadow(color: Colors.black, blurRadius: 5)
+                ],
+                border: Border.all(color: appColorWidget.blackColor),
+              ),
+              child: Center(
+                child: Text(
+                  'Yes',
+                  style: GoogleFonts.lexend(color: appColorWidget.blackColor, fontSize: 16),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ).then((value) {
+      logout.value = false;
+      home.value = true;
+    });
   }
 }
