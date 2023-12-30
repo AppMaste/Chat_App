@@ -179,7 +179,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   var home = true.obs;
   var addUser = false.obs;
-  var search = false.obs;
   var editeProfile = false.obs;
   var logout = false.obs;
 
@@ -271,7 +270,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       color: appColorWidget.whiteColor,
                       child: Padding(
                         padding: EdgeInsets.only(
-                          bottom: ScreenSize.fSize_60(),
+                          bottom: ScreenSize.fSize_50(),
                           left: ScreenSize.fSize_10(),
                           right: ScreenSize.fSize_10(),
                         ),
@@ -287,11 +286,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                 () {
                                   home.value = true;
                                   addUser.value = false;
-                                  search.value = false;
                                   editeProfile.value = false;
                                   logout.value = false;
                                   log("Pressed Home");
                                 },
+                                ScreenSize.fSize_20(),
                               ),
                               containerWidget.bottomContainer(
                                 context,
@@ -301,27 +300,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                 () {
                                   home.value = false;
                                   addUser.value = true;
-                                  search.value = false;
                                   editeProfile.value = false;
                                   logout.value = false;
                                   _addChatUserDialog();
                                   log("Pressed Add User");
                                 },
+                                ScreenSize.fSize_20(),
                               ),
-                              // containerWidget.bottomContainer(
-                              //   context,
-                              //   "Search",
-                              //   appImageWidget.search_Image,
-                              //   search.value,
-                              //   () {
-                              //     home.value = false;
-                              //     addUser.value = false;
-                              //     search.value = true;
-                              //     editeProfile.value = false;
-                              //     logout.value = false;
-                              //     log("Pressed Search");
-                              //   },
-                              // ),
                               containerWidget.bottomContainer(
                                 context,
                                 "Edite Profile",
@@ -330,7 +315,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                 () {
                                   home.value = false;
                                   addUser.value = false;
-                                  search.value = false;
                                   editeProfile.value = true;
                                   logout.value = false;
                                   log("Pressed Edite Profile");
@@ -339,11 +323,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     editeProfile.value = false;
                                     home.value = true;
                                   });
-                                  // Navigator.push(
-                                  //     context,
-                                  //     MaterialPageRoute(
-                                  //         builder: (_) => ProfileScreen(user: APIs.me)));
                                 },
+                                ScreenSize.fSize_15(),
                               ),
                               containerWidget.bottomContainer(
                                 context,
@@ -353,12 +334,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                 () {
                                   home.value = false;
                                   addUser.value = false;
-                                  search.value = false;
                                   editeProfile.value = false;
                                   logout.value = true;
                                   log("Pressed Logout");
                                   _logout();
                                 },
+                                ScreenSize.fSize_20(),
                               ),
                             ],
                           ),
@@ -501,7 +482,8 @@ class _HomeScreenState extends State<HomeScreen> {
             },
             child: Text(
               'Cancel',
-              style: GoogleFonts.lexend(color: appColorWidget.blackColor, fontSize: 16),
+              style: GoogleFonts.lexend(
+                  color: appColorWidget.blackColor, fontSize: 16),
             ),
           ),
 
@@ -522,7 +504,8 @@ class _HomeScreenState extends State<HomeScreen> {
             },
             child: Text(
               'Add',
-              style: GoogleFonts.lexend(color: appColorWidget.blackColor, fontSize: 16),
+              style: GoogleFonts.lexend(
+                  color: appColorWidget.blackColor, fontSize: 16),
             ),
           ),
         ],
@@ -569,7 +552,8 @@ class _HomeScreenState extends State<HomeScreen> {
               // Navigator.pop(context);
               Get.back();
             },
-            child: Container(height: ScreenSize.fSize_40(),
+            child: Container(
+              height: ScreenSize.fSize_40(),
               width: ScreenSize.fSize_80(),
               decoration: BoxDecoration(
                 color: appColorWidget.homeScreenBackgroundColor,
@@ -584,14 +568,15 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Center(
                 child: Text(
                   'No',
-                  style: GoogleFonts.lexend(color: appColorWidget.blackColor, fontSize: 16),
+                  style: GoogleFonts.lexend(
+                      color: appColorWidget.blackColor, fontSize: 16),
                 ),
               ),
             ),
           ),
           SizedBox(width: ScreenSize.fSize_10()),
           GestureDetector(
-            onTap: () async  {
+            onTap: () async {
               //         //for showing progress dialog
               Dialogs.showProgressBar(context);
 
@@ -630,7 +615,8 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Center(
                 child: Text(
                   'Yes',
-                  style: GoogleFonts.lexend(color: appColorWidget.blackColor, fontSize: 16),
+                  style: GoogleFonts.lexend(
+                      color: appColorWidget.blackColor, fontSize: 16),
                 ),
               ),
             ),

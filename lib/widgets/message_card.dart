@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat_demo_app/widgets/AppAllWidget/Details.dart';
+import 'package:chat_demo_app/widgets/AppAllWidget/height.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gallery_saver/gallery_saver.dart';
@@ -45,53 +46,56 @@ class _MessageCardState extends State<MessageCard> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         //message content
-        Flexible(
-          child: Container(
-            padding: EdgeInsets.all(widget.message.type == Type.image
-                ? mq.width * .03
-                : mq.width * .04),
-            margin: EdgeInsets.symmetric(
-                horizontal: mq.width * .04, vertical: mq.height * .01),
-            decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 221, 245, 255),
-                border: Border.all(color: Colors.lightBlue),
-                //making borders curved
-                borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(30),
-                    topRight: Radius.circular(30),
-                    bottomRight: Radius.circular(30))),
-            child: widget.message.type == Type.text
-                ?
-                //show text
-                Text(
-                    widget.message.msg,
-                    style:  GoogleFonts.lexend(fontSize: 15, color: Colors.black87),
-                  )
-                :
-                //show image
-                ClipRRect(
-                    borderRadius: BorderRadius.circular(15),
-                    child: CachedNetworkImage(
-                      imageUrl: widget.message.msg,
-                      placeholder: (context, url) => const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: CircularProgressIndicator(strokeWidth: 2),
+        Column(
+          children: [
+            Container(
+              padding: EdgeInsets.all(widget.message.type == Type.image
+                  ? mq.width * .03
+                  : mq.width * .04),
+              margin: EdgeInsets.symmetric(
+                  horizontal: mq.width * .04, vertical: mq.height * .01),
+              decoration: BoxDecoration(
+                  color: appColorWidget.appBarColor,
+                  // color: const Color.fromARGB(255, 221, 245, 255),
+                  // border: Border.all(color: Colors.lightBlue),
+                  //making borders curved
+                  borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30),
+                      bottomRight: Radius.circular(30))),
+              child: widget.message.type == Type.text
+                  ?
+                  //show text
+                  Text(
+                      widget.message.msg,
+                      style: GoogleFonts.lexend(
+                          fontSize: 15, color: appColorWidget.whiteColor),
+                    )
+                  :
+                  //show image
+                  ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: CachedNetworkImage(
+                        imageUrl: widget.message.msg,
+                        placeholder: (context, url) => const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.image, size: 70),
                       ),
-                      errorWidget: (context, url, error) =>
-                          const Icon(Icons.image, size: 70),
                     ),
-                  ),
-          ),
-        ),
-
-        //message time
-        Padding(
-          padding: EdgeInsets.only(right: mq.width * .04),
-          child: Text(
-            MyDateUtil.getFormattedTime(
-                context: context, time: widget.message.sent),
-            style:  GoogleFonts.lexend(fontSize: 13, color: Colors.black54),
-          ),
+            ),
+            //message time
+            Padding(
+              padding: EdgeInsets.only(right: mq.width * .04),
+              child: Text(
+                MyDateUtil.getFormattedTime(
+                    context: context, time: widget.message.sent),
+                style: GoogleFonts.lexend(fontSize: 13, color: Colors.black54),
+              ),
+            ),
+          ],
         ),
       ],
     );
@@ -106,62 +110,74 @@ class _MessageCardState extends State<MessageCard> {
         Row(
           children: [
             //for adding some space
-            SizedBox(width: mq.width * .04),
-
-            //double tick blue icon for message read
-            if (widget.message.read.isNotEmpty)
-              const Icon(Icons.done_all_rounded, color: Colors.blue, size: 20),
-
-            //for adding some space
             const SizedBox(width: 2),
-
-            //sent time
-            Text(
-              MyDateUtil.getFormattedTime(
-                  context: context, time: widget.message.sent),
-              style:  GoogleFonts.lexend(fontSize: 13, color: Colors.black54),
-            ),
           ],
         ),
 
         //message content
-        Flexible(
-          child: Container(
-            padding: EdgeInsets.all(widget.message.type == Type.image
-                ? mq.width * .03
-                : mq.width * .04),
-            margin: EdgeInsets.symmetric(
-                horizontal: mq.width * .04, vertical: mq.height * .01),
-            decoration: BoxDecoration(
-                color: appColorWidget.appBarColor,
-                border: Border.all(color: Colors.lightGreen),
-                //making borders curved
-                borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(30),
-                    topRight: Radius.circular(30),
-                    bottomLeft: Radius.circular(30))),
-            child: widget.message.type == Type.text
-                ?
-                //show text
-                Text(
-                    widget.message.msg,
-                    style:  GoogleFonts.lexend(fontSize: 15, color: Colors.black87),
-                  )
-                :
-                //show image
-                ClipRRect(
-                    borderRadius: BorderRadius.circular(15),
-                    child: CachedNetworkImage(
-                      imageUrl: widget.message.msg,
-                      placeholder: (context, url) => const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: CircularProgressIndicator(strokeWidth: 2),
+        Column(
+          children: [
+            //for adding some space
+            SizedBox(height: ScreenSize.fSize_10()),
+            Container(
+              padding: EdgeInsets.all(widget.message.type == Type.image
+                  ? mq.width * .03
+                  : mq.width * .04),
+              margin: EdgeInsets.symmetric(
+                  horizontal: mq.width * .04, vertical: mq.height * .01),
+              decoration: BoxDecoration(
+                  color: appColorWidget.appBarColor,
+                  // border: Border.all(color: Colors.lightGreen),
+                  //making borders curved
+                  borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30),
+                      bottomLeft: Radius.circular(30))),
+              child: widget.message.type == Type.text
+                  ?
+                  //show text
+                  Text(
+                      widget.message.msg,
+                      overflow: TextOverflow.fade,
+                      style: GoogleFonts.lexend(
+                          fontSize: 15, color: appColorWidget.whiteColor),
+                    )
+                  :
+                  //show image
+                  ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: CachedNetworkImage(
+                        imageUrl: widget.message.msg,
+                        placeholder: (context, url) => const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.image, size: 70),
                       ),
-                      errorWidget: (context, url, error) =>
-                          const Icon(Icons.image, size: 70),
                     ),
-                  ),
-          ),
+            ),
+            //sent time
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                //for adding some space
+                SizedBox(width: ScreenSize.fSize_4()),
+                Text(
+                  MyDateUtil.getFormattedTime(
+                      context: context, time: widget.message.sent),
+                  style:
+                      GoogleFonts.lexend(fontSize: 13, color: Colors.black54),
+                ),
+
+                //double tick blue icon for message read
+                if (widget.message.read.isNotEmpty)
+                  const Icon(Icons.done_all_rounded,
+                      color: Colors.blue, size: 20),
+              ],
+            ),
+          ],
         ),
       ],
     );
@@ -302,13 +318,16 @@ class _MessageCardState extends State<MessageCard> {
 
               //title
               title: Row(
-                children:  [
-                  Icon(
+                children: [
+                  const Icon(
                     Icons.message,
                     color: Colors.blue,
                     size: 28,
                   ),
-                  Text(' Update Message',style: GoogleFonts.lexend(),)
+                  Text(
+                    ' Update Message',
+                    style: GoogleFonts.lexend(),
+                  )
                 ],
               ),
 
@@ -330,9 +349,10 @@ class _MessageCardState extends State<MessageCard> {
                       //hide alert dialog
                       Navigator.pop(context);
                     },
-                    child:  Text(
+                    child: Text(
                       'Cancel',
-                      style: GoogleFonts.lexend(color: Colors.blue, fontSize: 16),
+                      style:
+                          GoogleFonts.lexend(color: Colors.blue, fontSize: 16),
                     )),
 
                 //update button
@@ -342,9 +362,10 @@ class _MessageCardState extends State<MessageCard> {
                       Navigator.pop(context);
                       APIs.updateMessage(widget.message, updatedMsg);
                     },
-                    child:  Text(
+                    child: Text(
                       'Update',
-                      style: GoogleFonts.lexend(color: Colors.blue, fontSize: 16),
+                      style:
+                          GoogleFonts.lexend(color: Colors.blue, fontSize: 16),
                     ))
               ],
             ));
@@ -373,7 +394,7 @@ class _OptionItem extends StatelessWidget {
             icon,
             Flexible(
                 child: Text('    $name',
-                    style:  GoogleFonts.lexend(
+                    style: GoogleFonts.lexend(
                         fontSize: 15,
                         color: Colors.black54,
                         letterSpacing: 0.5)))

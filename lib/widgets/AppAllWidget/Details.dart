@@ -24,7 +24,9 @@ class AppImageWidget extends GetxController {
   var edite_Profile_Image = "images/icons/edite_profile.png";
   var home_Image ="images/icons/home.png";
   var logout_Image = "images/icons/logout.png";
-  var search_Image = "images/icons/search.png";
   var user_Image = "images/icons/user.png";
   var background_Image = "assets/icons/background.jpg";
+
+  var add_Image = "images/add_image.png";
+  var avatar_Image = "images/avatar/avatar.png";
 }

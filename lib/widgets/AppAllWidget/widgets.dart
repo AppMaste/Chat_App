@@ -7,7 +7,7 @@ ContainerWidget containerWidget = Get.put(ContainerWidget());
 
 class ContainerWidget extends GetxController {
   bottomContainer(
-      BuildContext context, String name, String icon, bool tap, var ontap) {
+      BuildContext context, String name, String icon, bool tap, var ontap, var scale) {
     return GestureDetector(
       onTap: ontap,
       child: Column(
@@ -16,7 +16,7 @@ class ContainerWidget extends GetxController {
           Image.asset(
             icon,
             color: tap == true ? Colors.black : Colors.grey,
-            scale: ScreenSize.fSize_20(),
+            scale: scale,
           ),
           SizedBox(height: ScreenSize.fSize_10()),
           Text(

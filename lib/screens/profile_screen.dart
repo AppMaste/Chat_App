@@ -4,10 +4,13 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chat_demo_app/api/ads.dart';
+import 'package:chat_demo_app/screens/Select%20avatar.dart';
 import 'package:chat_demo_app/widgets/AppAllWidget/height.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
@@ -40,7 +43,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
           resizeToAvoidBottomInset: false,
-          backgroundColor: appColorWidget.homeScreenBackgroundColor,
+          backgroundColor: appColorWidget.whiteColor,
           //app bar
           appBar: AppBar(
               title: Text(
@@ -86,186 +89,182 @@ class _ProfileScreenState extends State<ProfileScreen> {
           // ),
 
           //body
-          body: Form(
-            key: _formKey,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: mq.width * .05),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    // for adding some space
-                    SizedBox(width: mq.width, height: mq.height * .03),
-
-                    //user profile picture
-                    Stack(
+          body: Stack(
+            children: [
+              Form(
+                key: _formKey,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: mq.width * .05),
+                  child: SingleChildScrollView(
+                    child: Column(
                       children: [
-                        //profile picture
-                        _image != null
-                            ?
-                            //local image
-                            ClipRRect(
-                                borderRadius:
-                                    BorderRadius.circular(mq.height * .1),
-                                child: Image.file(File(_image!),
-                                    width: mq.height * .2,
-                                    height: mq.height * .2,
-                                    fit: BoxFit.cover))
-                            :
+                        // for adding some space
+                        SizedBox(width: mq.width, height: mq.height * .03),
 
-                            //image from server
-                            ClipRRect(
-                                borderRadius:
-                                    BorderRadius.circular(mq.height * .1),
-                                child: CachedNetworkImage(
-                                  width: mq.height * .2,
-                                  height: mq.height * .2,
-                                  fit: BoxFit.cover,
-                                  imageUrl: widget.user.image,
-                                  errorWidget: (context, url, error) =>
-                                      const CircleAvatar(
-                                          child: Icon(CupertinoIcons.person)),
-                                ),
+                        //user profile picture
+                        Stack(
+                          children: [
+                            //profile picture
+                            _image != null
+                                ?
+                                //local image
+                                ClipRRect(
+                                    borderRadius:
+                                        BorderRadius.circular(mq.height * .1),
+                                    child: Image.file(File(_image!),
+                                        width: mq.height * .2,
+                                        height: mq.height * .2,
+                                        fit: BoxFit.cover))
+                                :
+
+                                //image from server
+                                ClipRRect(
+                                    borderRadius:
+                                        BorderRadius.circular(mq.height * .1),
+                                    child: CachedNetworkImage(
+                                      width: mq.height * .2,
+                                      height: mq.height * .2,
+                                      fit: BoxFit.cover,
+                                      imageUrl: widget.user.image,
+                                      errorWidget: (context, url, error) =>
+                                          const CircleAvatar(
+                                              child: Icon(CupertinoIcons.person)),
+                                    ),
+                                  ),
+
+                            //edit image button
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: MaterialButton(
+                                elevation: 1,
+                                onPressed: () {
+                                  _showBottomSheet();
+                                },
+                                shape: const CircleBorder(),
+                                color: Colors.white,
+                                child: const Icon(Icons.edit, color: Colors.blue),
                               ),
+                            )
+                          ],
+                        ),
 
-                        //edit image button
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: MaterialButton(
-                            elevation: 1,
-                            onPressed: () {
-                              _showBottomSheet();
-                            },
-                            shape: const CircleBorder(),
-                            color: Colors.white,
-                            child: const Icon(Icons.edit, color: Colors.blue),
+                        // for adding some space
+                        SizedBox(height: mq.height * .03),
+
+                        // user email label
+                        Text(widget.user.email,
+                            style: GoogleFonts.lexend(
+                                color: Colors.black54, fontSize: 16)),
+
+                        // for adding some space
+                        SizedBox(height: mq.height * .05),
+
+                        // name input field
+                        TextFormField(
+                          initialValue: widget.user.name,
+                          onSaved: (val) => APIs.me.name = val ?? '',
+                          validator: (val) => val != null && val.isNotEmpty
+                              ? null
+                              : 'Required Field',
+                          style: GoogleFonts.lexend(),
+                          decoration: InputDecoration(
+                              prefixIcon:
+                                  const Icon(Icons.person, color: Colors.blue),
+                              border: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: appColorWidget.blackColor),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              hintText: 'eg. Happy Singh',
+                              label: Text(
+                                'Name',
+                                style: GoogleFonts.lexend(
+                                  color: appColorWidget.blackColor,
+                                ),
+                              )),
+                        ),
+
+                        // for adding some space
+                        SizedBox(height: mq.height * .02),
+
+                        // about input field
+                        TextFormField(
+                          initialValue: widget.user.about,
+                          onSaved: (val) => APIs.me.about = val ?? '',
+                          validator: (val) => val != null && val.isNotEmpty
+                              ? null
+                              : 'Required Field',
+                          style: GoogleFonts.lexend(),
+                          decoration: InputDecoration(
+                              prefixIcon: const Icon(Icons.info_outline,
+                                  color: Colors.blue),
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12)),
+                              hintText: 'eg. Feeling Happy',
+                              hintStyle: GoogleFonts.lexend(),
+                              label: Text(
+                                'About',
+                                style: GoogleFonts.lexend(
+                                  color: appColorWidget.blackColor,
+                                ),
+                              )),
+                        ),
+
+                        // for adding some space
+                        SizedBox(height: mq.height * .05),
+
+                        // update profile button
+                        GestureDetector(
+                          onTap: () {
+                            if (_formKey.currentState!.validate()) {
+                              _formKey.currentState!.save();
+                              APIs.updateUserInfo().then((value) {
+                                Dialogs.showSnackbar(
+                                    context, 'Profile Updated Successfully!');
+                              });
+                            }
+                          },
+                          child: Container(
+                            height: ScreenSize.fSize_50(),
+                            width: ScreenSize.fSize_160(),
+                            decoration: BoxDecoration(
+                                color: appColorWidget.whiteColor,
+                                borderRadius: BorderRadius.circular(100),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Colors.black38,
+                                    blurRadius: 10,
+                                    offset: Offset(0, 4),
+                                  ),
+                                ],
+                                border:
+                                    Border.all(color: appColorWidget.blackColor)),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.edit,
+                                    size: 28, color: appColorWidget.appBarColor),
+                                SizedBox(width: ScreenSize.fSize_10()),
+                                Text(
+                                  'UPDATE',
+                                  style: GoogleFonts.lexend(
+                                      fontSize: ScreenSize.fSize_17(),
+                                      color: appColorWidget.blackColor,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                              ],
+                            ),
                           ),
                         )
                       ],
                     ),
-
-                    // for adding some space
-                    SizedBox(height: mq.height * .03),
-
-                    // user email label
-                    Text(widget.user.email,
-                        style: GoogleFonts.lexend(
-                            color: Colors.black54, fontSize: 16)),
-
-                    // for adding some space
-                    SizedBox(height: mq.height * .05),
-
-                    // name input field
-                    TextFormField(
-                      initialValue: widget.user.name,
-                      onSaved: (val) => APIs.me.name = val ?? '',
-                      validator: (val) => val != null && val.isNotEmpty
-                          ? null
-                          : 'Required Field',
-                      style: GoogleFonts.lexend(),
-                      decoration: InputDecoration(
-                          prefixIcon:
-                              const Icon(Icons.person, color: Colors.blue),
-                          border: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: appColorWidget.blackColor),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          hintText: 'eg. Happy Singh',
-                          label: Text(
-                            'Name',
-                            style: GoogleFonts.lexend(
-                              color: appColorWidget.blackColor,
-                            ),
-                          )),
-                    ),
-
-                    // for adding some space
-                    SizedBox(height: mq.height * .02),
-
-                    // about input field
-                    TextFormField(
-                      initialValue: widget.user.about,
-                      onSaved: (val) => APIs.me.about = val ?? '',
-                      validator: (val) => val != null && val.isNotEmpty
-                          ? null
-                          : 'Required Field',
-                      style: GoogleFonts.lexend(),
-                      decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.info_outline,
-                              color: Colors.blue),
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12)),
-                          hintText: 'eg. Feeling Happy',
-                          hintStyle: GoogleFonts.lexend(),
-                          label: Text(
-                            'About',
-                            style: GoogleFonts.lexend(
-                              color: appColorWidget.blackColor,
-                            ),
-                          )),
-                    ),
-
-                    // for adding some space
-                    SizedBox(height: mq.height * .05),
-
-                    // update profile button
-                    Container(
-                      height: ScreenSize.fSize_50(),
-                      width: ScreenSize.fSize_160(),
-                      decoration: BoxDecoration(
-                          color: appColorWidget.appBarColor,
-                          borderRadius: BorderRadius.circular(100),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.black38,
-                              blurRadius: 10,
-                              offset: Offset(0, 4),
-                            )
-                          ]),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.edit,
-                              size: 28, color: appColorWidget.whiteColor),
-                          SizedBox(width: ScreenSize.fSize_10()),
-                          Text(
-                            'UPDATE',
-                            style: GoogleFonts.lexend(
-                              fontSize: 16,
-                              color: appColorWidget.whiteColor,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-
-                    // ElevatedButton.icon(
-                    //   style: ElevatedButton.styleFrom(
-                    //       shape: const StadiumBorder(),
-                    //       backgroundColor: appColorWidget.appBarColor,
-                    //       minimumSize: Size(mq.width * .5, mq.height * .06)),
-                    //   onPressed: () {
-                    //     if (_formKey.currentState!.validate()) {
-                    //       _formKey.currentState!.save();
-                    //       APIs.updateUserInfo().then((value) {
-                    //         Dialogs.showSnackbar(
-                    //             context, 'Profile Updated Successfully!');
-                    //       });
-                    //     }
-                    //   },
-                    //   icon: Icon(Icons.edit,
-                    //       size: 28, color: appColorWidget.whiteColor),
-                    //   label: Text('UPDATE',
-                    //       style: GoogleFonts.lexend(
-                    //         fontSize: 16,
-                    //         color: appColorWidget.whiteColor,
-                    //       )),
-                    // )
-                  ],
+                  ),
                 ),
               ),
-            ),
+              bannerAD.getBanner(),
+
+            ],
           )),
     );
   }
@@ -297,54 +296,62 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   //pick from gallery button
-                  ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          shape: const CircleBorder(),
-                          fixedSize: Size(mq.width * .3, mq.height * .15)),
-                      onPressed: () async {
-                        final ImagePicker picker = ImagePicker();
+                  Padding(
+                    padding:  EdgeInsets.only(bottom: ScreenSize.fSize_15()),
+                    child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            shape: const CircleBorder(),
+                            fixedSize: Size(mq.width * .3, mq.height * .15)),
+                        onPressed: () async {
+                          final ImagePicker picker = ImagePicker();
 
-                        // Pick an image
-                        final XFile? image = await picker.pickImage(
-                            source: ImageSource.gallery, imageQuality: 80);
-                        if (image != null) {
-                          log('Image Path: ${image.path}');
-                          setState(() {
-                            _image = image.path;
-                          });
+                          // Pick an image
+                          final XFile? image = await picker.pickImage(
+                              source: ImageSource.gallery, imageQuality: 80);
+                          if (image != null) {
+                            log('Image Path: ${image.path}');
+                            setState(() {
+                              _image = image.path;
+                            });
 
-                          APIs.updateProfilePicture(File(_image!));
-                          // for hiding bottom sheet
-                          Navigator.pop(context);
-                        }
-                      },
-                      child: Image.asset('images/add_image.png')),
+                            APIs.updateProfilePicture(File(_image!));
+                            // for hiding bottom sheet
+                            Navigator.pop(context);
+                          }
+                        },
+                        child: Image.asset(appImageWidget.add_Image)),
+                  ),
 
                   //take picture from camera button
-                  ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          shape: const CircleBorder(),
-                          fixedSize: Size(mq.width * .3, mq.height * .15)),
-                      onPressed: () async {
-                        final ImagePicker picker = ImagePicker();
-
-                        // Pick an image
-                        final XFile? image = await picker.pickImage(
-                            source: ImageSource.camera, imageQuality: 80);
-                        if (image != null) {
-                          log('Image Path: ${image.path}');
-                          setState(() {
-                            _image = image.path;
-                          });
-
-                          APIs.updateProfilePicture(File(_image!));
-                          // for hiding bottom sheet
-                          Navigator.pop(context);
-                        }
-                      },
-                      child: Image.asset('images/camera.png')),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: ScreenSize.fSize_15()),
+                    child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            shape: const CircleBorder(),
+                            fixedSize: Size(mq.width * .3, mq.height * .15)),
+                        onPressed: () async {
+                          // final ImagePicker picker = ImagePicker();
+                          //
+                          // // Pick an image
+                          // final XFile? image = await picker.pickImage(
+                          //     source: ImageSource.camera, imageQuality: 80);
+                          // if (image != null) {
+                          //   log('Image Path: ${image.path}');
+                          //   setState(() {
+                          //     _image = image.path;
+                          //   });
+                          //
+                          //   APIs.updateProfilePicture(File(_image!));
+                            // for hiding bottom sheet
+                            Navigator.pop(context);
+                          // }
+                          // select avatar
+                          Get.to(() =>  SelectAvatarScreen());
+                        },
+                        child: Image.asset(appImageWidget.avatar_Image)),
+                  ),
                 ],
               )
             ],
