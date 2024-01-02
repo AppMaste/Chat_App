@@ -7,8 +7,6 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:gradient_borders/box_borders/gradient_box_border.dart';
-import 'package:simple_gradient_text/simple_gradient_text.dart';
 import '../api/apis.dart';
 import '../helper/dialogs.dart';
 import '../main.dart';
@@ -254,6 +252,16 @@ class _HomeScreenState extends State<HomeScreen> {
                         : Icons.search)),
               ],
             ),
+            // floatingActionButton: FloatingActionButton(
+            //   onPressed: () {
+            //     User? user = APIs.auth.currentUser;
+            //     if (user != null) {
+            //       print('User is signed in: ${user.email}');
+            //     } else {
+            //       print('User is not signed in');
+            //     }
+            //   },
+            // ),
 
             //body
             body: Container(
@@ -288,6 +296,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   addUser.value = false;
                                   editeProfile.value = false;
                                   logout.value = false;
+                                  findUser();
                                   log("Pressed Home");
                                 },
                                 ScreenSize.fSize_20(),
@@ -399,12 +408,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                           physics:
                                               const BouncingScrollPhysics(),
                                           itemBuilder: (context, index) {
+                                            log("LISTLISTLIST: ${_list[index].name}");
                                             // emailList.addAll([_list[index].email]);
                                             return ChatUserCard(
                                               user: _isSearching
                                                   ? _searchList[index]
                                                   : _list[index],
-                                              // user: _list[index],
                                             );
                                           });
                                     } else {
@@ -428,6 +437,16 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  // find random user
+  void findUser() {
+    if (_list[0].isOnline) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Some error")));
+    } else {
+      log("errorrrrrrrrrrr");
+    }
   }
 
   // for adding new chat user
@@ -536,7 +555,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             SizedBox(height: ScreenSize.fSize_20()),
             Text(
-              'Are you sure you want to logout?',
+              'Are you sure you want to logout ?',
               style: GoogleFonts.lexend(
                 fontSize: ScreenSize.fSize_14(),
               ),
@@ -561,7 +580,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Radius.circular(100),
                 ),
                 boxShadow: const [
-                  BoxShadow(color: Colors.black, blurRadius: 5)
+                  BoxShadow(color: Colors.black54, blurRadius: 5)
                 ],
                 border: Border.all(color: appColorWidget.blackColor),
               ),
@@ -577,7 +596,7 @@ class _HomeScreenState extends State<HomeScreen> {
           SizedBox(width: ScreenSize.fSize_10()),
           GestureDetector(
             onTap: () async {
-              //         //for showing progress dialog
+              //for showing progress dialog
               Dialogs.showProgressBar(context);
 
               await APIs.updateActiveStatus(false);
@@ -608,7 +627,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Radius.circular(100),
                 ),
                 boxShadow: const [
-                  BoxShadow(color: Colors.black, blurRadius: 5)
+                  BoxShadow(color: Colors.black54, blurRadius: 5)
                 ],
                 border: Border.all(color: appColorWidget.blackColor),
               ),

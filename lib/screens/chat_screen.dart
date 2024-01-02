@@ -253,10 +253,11 @@ class _ChatScreenState extends State<ChatScreen> {
                     onTap: () {
                       if (_showEmoji) setState(() => _showEmoji = !_showEmoji);
                     },
+                        // maxLength: ,
                     decoration: InputDecoration(
                         hintText: 'Type Something...',
                         hintStyle: GoogleFonts.lexend(color: Colors.blueAccent),
-                        border: InputBorder.none),
+                        border: InputBorder.none,),
                   )),
 
                   //pick image from gallery button
