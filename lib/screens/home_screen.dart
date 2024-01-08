@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 import 'package:chat_demo_app/widgets/AppAllWidget/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,6 +16,7 @@ import '../widgets/AppAllWidget/Details.dart';
 import '../widgets/AppAllWidget/height.dart';
 import '../widgets/chat_user_card.dart';
 import 'auth/login_screen.dart';
+import 'demo Page.dart';
 import 'profile_screen.dart';
 
 List emailList = [];
@@ -96,7 +98,9 @@ Scaffold _buildExitDialog(BuildContext context) {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () => SystemNavigator.pop(),
+                  onTap: () {
+                    exit(0);
+                  },
                   child: Container(
                     height: 50,
                     width: 100,
@@ -142,7 +146,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   // for storing all users
   List<ChatUser> _list = [];
-  List<ChatUser> empty = [];
+  List empty = [];
 
   // for storing searched items
   final List<ChatUser> _searchList = [];
@@ -150,6 +154,8 @@ class _HomeScreenState extends State<HomeScreen> {
   // for storing search status
   bool _isSearching = false;
   var userFind = 0.obs;
+
+  RxInt number = 0.obs;
 
   @override
   void initState() {
@@ -253,12 +259,12 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             // floatingActionButton: FloatingActionButton(
-            //   onPressed: () {
-            //     User? user = APIs.auth.currentUser;
+            //   onPressed: () async {
+            //     User? user = await AuthService().signInWithGoogle();
             //     if (user != null) {
-            //       print('User is signed in: ${user.email}');
+            //       print("User signed in: ${user.displayName}");
             //     } else {
-            //       print('User is not signed in');
+            //       print("Sign-in failed");
             //     }
             //   },
             // ),
@@ -303,15 +309,25 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               containerWidget.bottomContainer(
                                 context,
-                                "Add User",
+                                "Find User",
                                 appImageWidget.user_Image,
                                 addUser.value,
                                 () {
+                                  Future.delayed(
+                                    const Duration(seconds: 1),
+                                    () {
+                                      home.value = true;
+                                      addUser.value = false;
+                                      editeProfile.value = false;
+                                      logout.value = false;
+                                    },
+                                  );
                                   home.value = false;
                                   addUser.value = true;
                                   editeProfile.value = false;
                                   logout.value = false;
-                                  _addChatUserDialog();
+                                  // _addChatUserDialog();
+                                  findUser();
                                   log("Pressed Add User");
                                 },
                                 ScreenSize.fSize_20(),
@@ -387,7 +403,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                   case ConnectionState.none:
                                   // return const Center(
                                   //     child: CircularProgressIndicator());
-
                                   //if some or all data is loaded then show it
                                   case ConnectionState.active:
                                   case ConnectionState.done:
@@ -402,18 +417,25 @@ class _HomeScreenState extends State<HomeScreen> {
                                       return ListView.builder(
                                           itemCount: _isSearching
                                               ? _searchList.length
-                                              : _list.length,
+                                              : 1,
+                                          // itemCount: 1,
                                           padding: EdgeInsets.only(
                                               top: mq.height * .01),
                                           physics:
                                               const BouncingScrollPhysics(),
                                           itemBuilder: (context, index) {
-                                            log("LISTLISTLIST: ${_list[index].name}");
+                                            // log("LISTLISTLIST: ${_list[number.value]}");
                                             // emailList.addAll([_list[index].email]);
-                                            return ChatUserCard(
-                                              user: _isSearching
-                                                  ? _searchList[index]
-                                                  : _list[index],
+                                            return Obx(
+                                              () => ChatUserCard(
+                                                // user: _isSearching
+                                                //     ? _searchList[index]
+                                                //     : _list[index],
+                                                user:
+                                                    _list.length == number.value
+                                                        ? _list[0]
+                                                        : _list[number.value],
+                                              ),
                                             );
                                           });
                                     } else {
@@ -441,12 +463,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // find random user
   void findUser() {
-    if (_list[0].isOnline) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("Some error")));
-    } else {
-      log("errorrrrrrrrrrr");
-    }
+    setState(() {
+      if (_list.length != number.value) {
+        number.value++;
+        // empty.add([number.value]);
+        // log("number_number_number ${empty}");
+      } else {
+        number.value = 0;
+        // empty.r(number.value);
+        log("errorrrrrrrrrrr");
+      }
+    });
   }
 
   // for adding new chat user
