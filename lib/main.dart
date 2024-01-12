@@ -107,7 +107,6 @@ Future<void> main() async {
   });
 }
 
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -116,14 +115,17 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-            appBarTheme: AppBarTheme(
-          centerTitle: true,
-          elevation: 1,
-          iconTheme: const IconThemeData(color: Colors.black),
-          titleTextStyle: GoogleFonts.lexend(
-              color: Colors.black, fontWeight: FontWeight.normal, fontSize: 19),
-          backgroundColor: Colors.white,
-        )),
+          appBarTheme: AppBarTheme(
+            centerTitle: true,
+            elevation: 1,
+            iconTheme: const IconThemeData(color: Colors.black),
+            titleTextStyle: GoogleFonts.lexend(
+                color: Colors.black,
+                fontWeight: FontWeight.normal,
+                fontSize: 19),
+            backgroundColor: Colors.white,
+          ),
+        ),
         home: const SplashScreen());
   }
 }

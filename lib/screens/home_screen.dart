@@ -302,7 +302,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   addUser.value = false;
                                   editeProfile.value = false;
                                   logout.value = false;
-                                  findUser();
+                                  // findUser();
                                   log("Pressed Home");
                                 },
                                 ScreenSize.fSize_20(),
