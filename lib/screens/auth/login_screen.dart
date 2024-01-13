@@ -114,8 +114,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       //body
       body: Container(
-        decoration: BoxDecoration(
-            ),
+        decoration: const BoxDecoration(),
         height: double.maxFinite,
         width: double.maxFinite,
         child: Stack(
@@ -150,7 +149,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         BoxShadow(
                           color: Colors.grey,
                           blurRadius: 10,
-                          offset: Offset(0, 4),
+                          offset: Offset(0, 0),
                         )
                       ]),
                   child: Row(
@@ -158,11 +157,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: [
                       Image.asset(appImageWidget.googleImage,
                           height: mq.height * .04),
-                   SizedBox(width: ScreenSize.fSize_20()),
-                  RichText(
+                      SizedBox(width: ScreenSize.fSize_20()),
+                      RichText(
                         text: TextSpan(
-                          style:
-                              GoogleFonts.lexend(color: Colors.black, fontSize: 16),
+                          style: GoogleFonts.lexend(
+                              color: Colors.black, fontSize: 16),
                           children: [
                             TextSpan(
                               text: 'Login with ',

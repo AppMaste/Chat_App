@@ -16,7 +16,6 @@ import '../widgets/AppAllWidget/Details.dart';
 import '../widgets/AppAllWidget/height.dart';
 import '../widgets/chat_user_card.dart';
 import 'auth/login_screen.dart';
-import 'demo Page.dart';
 import 'profile_screen.dart';
 
 List emailList = [];
@@ -218,32 +217,32 @@ class _HomeScreenState extends State<HomeScreen> {
               // ),
               title: _isSearching
                   ? TextField(
-                      decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Name, Email, ...'),
-                      autofocus: true,
-                      style:
-                          GoogleFonts.lexend(fontSize: 17, letterSpacing: 0.5),
-                      //when search text changes then updated search list
-                      onChanged: (val) {
-                        //search logic
-                        _searchList.clear();
+                decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Name, Email, ...'),
+                autofocus: true,
+                style:
+                GoogleFonts.lexend(fontSize: 17, letterSpacing: 0.5),
+                //when search text changes then updated search list
+                onChanged: (val) {
+                  //search logic
+                  _searchList.clear();
 
-                        for (var i in _list) {
-                          if (i.name
-                                  .toLowerCase()
-                                  .contains(val.toLowerCase()) ||
-                              i.email
-                                  .toLowerCase()
-                                  .contains(val.toLowerCase())) {
-                            _searchList.add(i);
-                            setState(() {
-                              _searchList;
-                            });
-                          }
-                        }
-                      },
-                    )
+                  for (var i in _list) {
+                    if (i.name
+                        .toLowerCase()
+                        .contains(val.toLowerCase()) ||
+                        i.email
+                            .toLowerCase()
+                            .contains(val.toLowerCase())) {
+                      _searchList.add(i);
+                      setState(() {
+                        _searchList;
+                      });
+                    }
+                  }
+                },
+              )
                   : Text('Chat Mingle', style: GoogleFonts.lexend()),
               actions: [
                 //search user button
@@ -289,85 +288,88 @@ class _HomeScreenState extends State<HomeScreen> {
                           right: ScreenSize.fSize_10(),
                         ),
                         child: Obx(
-                          () => Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              containerWidget.bottomContainer(
-                                context,
-                                "Home",
-                                appImageWidget.home_Image,
-                                home.value,
-                                () {
-                                  home.value = true;
-                                  addUser.value = false;
-                                  editeProfile.value = false;
-                                  logout.value = false;
-                                  // findUser();
-                                  log("Pressed Home");
-                                },
-                                ScreenSize.fSize_20(),
-                              ),
-                              containerWidget.bottomContainer(
-                                context,
-                                "Find User",
-                                appImageWidget.user_Image,
-                                addUser.value,
-                                () {
-                                  Future.delayed(
-                                    const Duration(seconds: 1),
-                                    () {
+                              () =>
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment
+                                    .spaceBetween,
+                                children: [
+                                  containerWidget.bottomContainer(
+                                    context,
+                                    "Home",
+                                    appImageWidget.home_Image,
+                                    home.value,
+                                        () {
                                       home.value = true;
                                       addUser.value = false;
                                       editeProfile.value = false;
                                       logout.value = false;
+                                      // findUser();
+                                      log("Pressed Home");
                                     },
-                                  );
-                                  home.value = false;
-                                  addUser.value = true;
-                                  editeProfile.value = false;
-                                  logout.value = false;
-                                  // _addChatUserDialog();
-                                  findUser();
-                                  log("Pressed Add User");
-                                },
-                                ScreenSize.fSize_20(),
+                                    ScreenSize.fSize_20(),
+                                  ),
+                                  containerWidget.bottomContainer(
+                                    context,
+                                    "Find User",
+                                    appImageWidget.user_Image,
+                                    addUser.value,
+                                        () {
+                                      Future.delayed(
+                                        const Duration(seconds: 1),
+                                            () {
+                                          home.value = true;
+                                          addUser.value = false;
+                                          editeProfile.value = false;
+                                          logout.value = false;
+                                        },
+                                      );
+                                      home.value = false;
+                                      addUser.value = true;
+                                      editeProfile.value = false;
+                                      logout.value = false;
+                                      // _addChatUserDialog();
+                                      // findUser();
+                                      _addChatUserDialog();
+                                      log("Pressed Add User");
+                                    },
+                                    ScreenSize.fSize_20(),
+                                  ),
+                                  containerWidget.bottomContainer(
+                                    context,
+                                    "Edite Profile",
+                                    appImageWidget.edite_Profile_Image,
+                                    editeProfile.value,
+                                        () {
+                                      home.value = false;
+                                      addUser.value = false;
+                                      editeProfile.value = true;
+                                      logout.value = false;
+                                      log("Pressed Edite Profile");
+                                      Get.to(() => ProfileScreen(user: APIs.me))
+                                          ?.then((value) {
+                                        editeProfile.value = false;
+                                        home.value = true;
+                                      });
+                                    },
+                                    ScreenSize.fSize_15(),
+                                  ),
+                                  containerWidget.bottomContainer(
+                                    context,
+                                    "logout",
+                                    appImageWidget.logout_Image,
+                                    logout.value,
+                                        () {
+                                      home.value = false;
+                                      addUser.value = false;
+                                      editeProfile.value = false;
+                                      logout.value = true;
+                                      log("Pressed Logout");
+                                      _logout();
+                                    },
+                                    ScreenSize.fSize_20(),
+                                  ),
+                                ],
                               ),
-                              containerWidget.bottomContainer(
-                                context,
-                                "Edite Profile",
-                                appImageWidget.edite_Profile_Image,
-                                editeProfile.value,
-                                () {
-                                  home.value = false;
-                                  addUser.value = false;
-                                  editeProfile.value = true;
-                                  logout.value = false;
-                                  log("Pressed Edite Profile");
-                                  Get.to(() => ProfileScreen(user: APIs.me))
-                                      ?.then((value) {
-                                    editeProfile.value = false;
-                                    home.value = true;
-                                  });
-                                },
-                                ScreenSize.fSize_15(),
-                              ),
-                              containerWidget.bottomContainer(
-                                context,
-                                "logout",
-                                appImageWidget.logout_Image,
-                                logout.value,
-                                () {
-                                  home.value = false;
-                                  addUser.value = false;
-                                  editeProfile.value = false;
-                                  logout.value = true;
-                                  log("Pressed Logout");
-                                  _logout();
-                                },
-                                ScreenSize.fSize_20(),
-                              ),
-                            ],
-                          ),
                         ),
                       ),
                     ),
@@ -380,25 +382,25 @@ class _HomeScreenState extends State<HomeScreen> {
                       //get id of only known users
                       builder: (context, snapshot) {
                         switch (snapshot.connectionState) {
-                          //if data is loading
+                        //if data is loading
                           case ConnectionState.waiting:
                           case ConnectionState.none:
                             return const Center(
                                 child: CircularProgressIndicator());
 
-                          //if some or all data is loaded then show it
+                        //if some or all data is loaded then show it
                           case ConnectionState.active:
                           case ConnectionState.done:
                             return StreamBuilder(
                               stream: APIs.getAllUsers(snapshot.data?.docs
-                                      .map((e) => e.id)
-                                      .toList() ??
+                                  .map((e) => e.id)
+                                  .toList() ??
                                   []),
 
                               //get only those user, who's ids are provided
                               builder: (context, snapshot) {
                                 switch (snapshot.connectionState) {
-                                  //if data is loading
+                                //if data is loading
                                   case ConnectionState.waiting:
                                   case ConnectionState.none:
                                   // return const Center(
@@ -408,11 +410,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                   case ConnectionState.done:
                                     final data = snapshot.data?.docs;
                                     _list = data
-                                            ?.map((e) =>
-                                                ChatUser.fromJson(e.data()))
-                                            .toList() ??
+                                        ?.map((e) =>
+                                        ChatUser.fromJson(e.data()))
+                                        .toList() ??
                                         [];
-
+                                    log("userlistuserlist ${_list}");
                                     if (_list.isNotEmpty) {
                                       return ListView.builder(
                                           itemCount: _isSearching
@@ -422,20 +424,21 @@ class _HomeScreenState extends State<HomeScreen> {
                                           padding: EdgeInsets.only(
                                               top: mq.height * .01),
                                           physics:
-                                              const BouncingScrollPhysics(),
+                                          const BouncingScrollPhysics(),
                                           itemBuilder: (context, index) {
                                             // log("LISTLISTLIST: ${_list[number.value]}");
                                             // emailList.addAll([_list[index].email]);
                                             return Obx(
-                                              () => ChatUserCard(
-                                                // user: _isSearching
-                                                //     ? _searchList[index]
-                                                //     : _list[index],
-                                                user:
+                                                  () =>
+                                                  ChatUserCard(
+                                                    // user: _isSearching
+                                                    //     ? _searchList[index]
+                                                    //     : _list[index],
+                                                    user:
                                                     _list.length == number.value
                                                         ? _list[0]
                                                         : _list[number.value],
-                                              ),
+                                                  ),
                                             );
                                           });
                                     } else {
@@ -482,80 +485,84 @@ class _HomeScreenState extends State<HomeScreen> {
 
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        backgroundColor: appColorWidget.homeScreenBackgroundColor,
-        contentPadding:
+      builder: (_) =>
+          AlertDialog(
+            backgroundColor: appColorWidget.homeScreenBackgroundColor,
+            contentPadding:
             const EdgeInsets.only(left: 24, right: 24, top: 20, bottom: 10),
 
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20)),
 
-        //title
-        title: Row(
-          children: [
-            const Icon(
-              Icons.person_add,
-              color: Colors.blue,
-              size: 28,
+            //title
+            title: Row(
+              children: [
+                const Icon(
+                  Icons.person_add,
+                  color: Colors.blue,
+                  size: 28,
+                ),
+                Text(
+                  '  Add User',
+                  style: GoogleFonts.lexend(),
+                )
+              ],
             ),
-            Text(
-              '  Add User',
-              style: GoogleFonts.lexend(),
-            )
-          ],
-        ),
 
-        //content
-        content: TextFormField(
-          maxLines: null,
-          onChanged: (value) => email = value,
-          decoration: InputDecoration(
-            hintText: 'Email Id',
-            hintStyle: GoogleFonts.lexend(color: appColorWidget.blackColor),
-            prefixIcon: const Icon(Icons.email, color: Colors.blue),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15),
+            //content
+            content: TextFormField(
+              maxLines: null,
+              onChanged: (value) => email = value,
+              decoration: InputDecoration(
+                hintText: 'Email Id',
+                hintStyle: GoogleFonts.lexend(color: appColorWidget.blackColor),
+                prefixIcon: const Icon(Icons.email, color: Colors.blue),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+              ),
             ),
+
+            //actions
+            actions: [
+              //cancel button
+              MaterialButton(
+                onPressed: () {
+                  //hide alert dialog
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  'Cancel',
+                  style: GoogleFonts.lexend(
+                      color: appColorWidget.blackColor, fontSize: 16),
+                ),
+              ),
+
+              //add button
+              MaterialButton(
+                onPressed: () async {
+                  //hide alert dialog
+                  Navigator.pop(context);
+                  if (email.isNotEmpty) {
+                    await APIs.addChatUser(email).then(
+                          (value) {
+                        if (!value) {
+                          Dialogs.showSnackbar(
+                              context, 'User does not Exists!');
+                        }
+                      },
+                    );
+                    log("listlistlistlist ${email}");
+                  }
+                },
+                child: Text(
+                  'Add',
+                  style: GoogleFonts.lexend(
+                      color: appColorWidget.blackColor, fontSize: 16),
+                ),
+              ),
+            ],
           ),
-        ),
-
-        //actions
-        actions: [
-          //cancel button
-          MaterialButton(
-            onPressed: () {
-              //hide alert dialog
-              Navigator.pop(context);
-            },
-            child: Text(
-              'Cancel',
-              style: GoogleFonts.lexend(
-                  color: appColorWidget.blackColor, fontSize: 16),
-            ),
-          ),
-
-          //add button
-          MaterialButton(
-            onPressed: () async {
-              //hide alert dialog
-              Navigator.pop(context);
-              if (email.isNotEmpty) {
-                await APIs.addChatUser(email).then(
-                  (value) {
-                    if (!value) {
-                      Dialogs.showSnackbar(context, 'User does not Exists!');
-                    }
-                  },
-                );
-              }
-            },
-            child: Text(
-              'Add',
-              style: GoogleFonts.lexend(
-                  color: appColorWidget.blackColor, fontSize: 16),
-            ),
-          ),
-        ],
-      ),
     ).then((value) {
       addUser.value = false;
       home.value = true;
@@ -565,110 +572,113 @@ class _HomeScreenState extends State<HomeScreen> {
   void _logout() {
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        backgroundColor: appColorWidget.homeScreenBackgroundColor,
-        contentPadding:
+      builder: (_) =>
+          AlertDialog(
+            backgroundColor: appColorWidget.homeScreenBackgroundColor,
+            contentPadding:
             const EdgeInsets.only(left: 24, right: 24, top: 20, bottom: 10),
 
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20)),
 
-        //title
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Logout',
-              style: GoogleFonts.lexend(),
-            ),
-            SizedBox(height: ScreenSize.fSize_20()),
-            Text(
-              'Are you sure you want to logout ?',
-              style: GoogleFonts.lexend(
-                fontSize: ScreenSize.fSize_14(),
-              ),
-            ),
-          ],
-        ),
-
-        //actions
-        actions: [
-          //cancel button
-          GestureDetector(
-            onTap: () async {
-              // Navigator.pop(context);
-              Get.back();
-            },
-            child: Container(
-              height: ScreenSize.fSize_40(),
-              width: ScreenSize.fSize_80(),
-              decoration: BoxDecoration(
-                color: appColorWidget.homeScreenBackgroundColor,
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(100),
+            //title
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Logout',
+                  style: GoogleFonts.lexend(),
                 ),
-                boxShadow: const [
-                  BoxShadow(color: Colors.black54, blurRadius: 5)
-                ],
-                border: Border.all(color: appColorWidget.blackColor),
-              ),
-              child: Center(
-                child: Text(
-                  'No',
+                SizedBox(height: ScreenSize.fSize_20()),
+                Text(
+                  'Are you sure you want to logout ?',
                   style: GoogleFonts.lexend(
-                      color: appColorWidget.blackColor, fontSize: 16),
+                    fontSize: ScreenSize.fSize_14(),
+                  ),
                 ),
-              ),
+              ],
             ),
-          ),
-          SizedBox(width: ScreenSize.fSize_10()),
-          GestureDetector(
-            onTap: () async {
-              //for showing progress dialog
-              Dialogs.showProgressBar(context);
 
-              await APIs.updateActiveStatus(false);
-
-              //sign out from app
-              await APIs.auth.signOut().then((value) async {
-                await GoogleSignIn().signOut().then((value) {
-                  //for hiding progress dialog
-                  Navigator.pop(context);
-
-                  //for moving to home screen
-                  Navigator.pop(context);
-
-                  APIs.auth = FirebaseAuth.instance;
-
-                  //replacing home screen with login screen
-                  Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (_) => const LoginScreen()));
-                });
-              });
-            },
-            child: Container(
-              height: ScreenSize.fSize_40(),
-              width: ScreenSize.fSize_80(),
-              decoration: BoxDecoration(
-                color: appColorWidget.homeScreenBackgroundColor,
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(100),
-                ),
-                boxShadow: const [
-                  BoxShadow(color: Colors.black54, blurRadius: 5)
-                ],
-                border: Border.all(color: appColorWidget.blackColor),
-              ),
-              child: Center(
-                child: Text(
-                  'Yes',
-                  style: GoogleFonts.lexend(
-                      color: appColorWidget.blackColor, fontSize: 16),
+            //actions
+            actions: [
+              //cancel button
+              GestureDetector(
+                onTap: () async {
+                  // Navigator.pop(context);
+                  Get.back();
+                },
+                child: Container(
+                  height: ScreenSize.fSize_40(),
+                  width: ScreenSize.fSize_80(),
+                  decoration: BoxDecoration(
+                    color: appColorWidget.homeScreenBackgroundColor,
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(100),
+                    ),
+                    boxShadow: const [
+                      BoxShadow(color: Colors.black54, blurRadius: 5)
+                    ],
+                    border: Border.all(color: appColorWidget.blackColor),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'No',
+                      style: GoogleFonts.lexend(
+                          color: appColorWidget.blackColor, fontSize: 16),
+                    ),
+                  ),
                 ),
               ),
-            ),
+              SizedBox(width: ScreenSize.fSize_10()),
+              GestureDetector(
+                onTap: () async {
+                  //for showing progress dialog
+                  Dialogs.showProgressBar(context);
+
+                  await APIs.updateActiveStatus(false);
+
+                  //sign out from app
+                  await APIs.auth.signOut().then((value) async {
+                    await GoogleSignIn().signOut().then((value) {
+                      //for hiding progress dialog
+                      Navigator.pop(context);
+
+                      //for moving to home screen
+                      Navigator.pop(context);
+
+                      APIs.auth = FirebaseAuth.instance;
+
+                      //replacing home screen with login screen
+                      Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (
+                              _) => const LoginScreen()));
+                    });
+                  });
+                },
+                child: Container(
+                  height: ScreenSize.fSize_40(),
+                  width: ScreenSize.fSize_80(),
+                  decoration: BoxDecoration(
+                    color: appColorWidget.homeScreenBackgroundColor,
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(100),
+                    ),
+                    boxShadow: const [
+                      BoxShadow(color: Colors.black54, blurRadius: 5)
+                    ],
+                    border: Border.all(color: appColorWidget.blackColor),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'Yes',
+                      style: GoogleFonts.lexend(
+                          color: appColorWidget.blackColor, fontSize: 16),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
     ).then((value) {
       logout.value = false;
       home.value = true;
